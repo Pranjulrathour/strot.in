@@ -1,11 +1,12 @@
 import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import session from "express-session";
+import bcrypt from "bcryptjs";
 import { storage } from "./storage";
 import {
   insertUserSchema, insertDonationSchema, insertJobSchema,
   insertWorkerProfileSchema, insertWorkshopSchema, insertApplicationSchema,
-  insertCommunityHeadSchema
+  insertCommunityHeadSchema, insertDonationRequestSchema, insertPlacementSchema
 } from "@shared/schema";
 import { z } from "zod";
 import createMemoryStore from "memorystore";
@@ -19,11 +20,11 @@ declare module "express-session" {
 }
 
 async function hashPassword(password: string): Promise<string> {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(password);
-  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, "0")).join("");
+  return bcrypt.hash(password, 10);
+}
+
+async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(password, hash);
 }
 
 function requireAuth(req: Request, res: Response, next: NextFunction) {
@@ -92,8 +93,8 @@ export async function registerRoutes(
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
-      const hashedPassword = await hashPassword(password);
-      if (user.password !== hashedPassword) {
+      const valid = await verifyPassword(password, user.password);
+      if (!valid) {
         return res.status(401).json({ message: "Invalid credentials" });
       }
 
@@ -165,10 +166,17 @@ export async function registerRoutes(
 
   app.post("/api/donations", requireAuth, async (req, res) => {
     try {
-      const data = insertDonationSchema.parse({
-        ...req.body,
-        donorId: req.session.userId,
-      });
+      const donationData = {
+        donorId: req.session.userId!,
+        itemName: req.body.itemName,
+        category: req.body.category,
+        quantity: req.body.quantity || 1,
+        description: req.body.description || null,
+        images: req.body.images || [],
+        locality: req.body.locality || null,
+        status: "pending" as const,
+      };
+      const data = insertDonationSchema.parse(donationData);
       const donation = await storage.createDonation(data);
       res.json(donation);
     } catch (error) {
@@ -185,11 +193,7 @@ export async function registerRoutes(
       if (!ch) {
         return res.status(403).json({ message: "Only community heads can claim donations" });
       }
-      const donation = await storage.updateDonation(req.params.id, {
-        communityHeadId: ch.id,
-        status: "claimed",
-        claimedAt: new Date(),
-      });
+      const donation = await storage.claimDonation(req.params.id, ch.id);
       res.json(donation);
     } catch (error) {
       res.status(500).json({ message: "Failed to claim donation" });
@@ -199,14 +203,57 @@ export async function registerRoutes(
   app.patch("/api/donations/:id/deliver", requireAuth, async (req, res) => {
     try {
       const { proofImage } = req.body;
-      const donation = await storage.updateDonation(req.params.id, {
-        status: "delivered",
-        deliveredAt: new Date(),
-        proofImage,
-      });
+      const donation = await storage.deliverDonation(req.params.id, proofImage);
       res.json(donation);
     } catch (error) {
       res.status(500).json({ message: "Failed to mark donation as delivered" });
+    }
+  });
+
+  app.get("/api/donation-requests", requireAuth, async (req, res) => {
+    try {
+      const requests = await storage.getAllDonationRequests();
+      res.json(requests);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch donation requests" });
+    }
+  });
+
+  app.get("/api/donation-requests/ch", requireAuth, async (req, res) => {
+    try {
+      const ch = await storage.getCommunityHeadByUserId(req.session.userId!);
+      if (!ch) {
+        return res.status(404).json({ message: "Community head profile not found" });
+      }
+      const requests = await storage.getDonationRequestsByCH(ch.id);
+      res.json(requests);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch donation requests" });
+    }
+  });
+
+  app.post("/api/donation-requests", requireAuth, async (req, res) => {
+    try {
+      const ch = await storage.getCommunityHeadByUserId(req.session.userId!);
+      if (!ch) {
+        return res.status(403).json({ message: "Only community heads can create donation requests" });
+      }
+      const requestData = {
+        communityHeadId: ch.id,
+        title: req.body.title,
+        description: req.body.description || null,
+        category: req.body.category,
+        urgency: req.body.urgency || "normal",
+        status: "open",
+      };
+      const data = insertDonationRequestSchema.parse(requestData);
+      const request = await storage.createDonationRequest(data);
+      res.json(request);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors[0].message });
+      }
+      res.status(500).json({ message: "Failed to create donation request" });
     }
   });
 
@@ -239,10 +286,16 @@ export async function registerRoutes(
 
   app.post("/api/jobs", requireAuth, async (req, res) => {
     try {
-      const data = insertJobSchema.parse({
-        ...req.body,
-        businessId: req.session.userId,
-      });
+      const jobData = {
+        businessId: req.session.userId!,
+        title: req.body.title,
+        description: req.body.description || null,
+        requiredSkill: req.body.requiredSkill,
+        salaryRange: req.body.salaryRange || null,
+        location: req.body.location,
+        status: "open" as const,
+      };
+      const data = insertJobSchema.parse(jobData);
       const job = await storage.createJob(data);
       res.json(job);
     } catch (error) {
@@ -253,9 +306,13 @@ export async function registerRoutes(
     }
   });
 
-  app.patch("/api/jobs/:id", requireAuth, async (req, res) => {
+  app.patch("/api/jobs/:id/status", requireAuth, async (req, res) => {
     try {
-      const job = await storage.updateJob(req.params.id, req.body);
+      const { status } = req.body;
+      if (!["open", "filled", "closed"].includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+      const job = await storage.updateJobStatus(req.params.id, status);
       res.json(job);
     } catch (error) {
       res.status(500).json({ message: "Failed to update job" });
@@ -290,10 +347,16 @@ export async function registerRoutes(
       if (!ch) {
         return res.status(403).json({ message: "Only community heads can add workers" });
       }
-      const data = insertWorkerProfileSchema.parse({
-        ...req.body,
+      const workerData = {
         communityHeadId: ch.id,
-      });
+        name: req.body.name,
+        age: req.body.age || null,
+        skill: req.body.skill,
+        photos: req.body.photos || [],
+        experience: req.body.experience || null,
+        status: "available" as const,
+      };
+      const data = insertWorkerProfileSchema.parse(workerData);
       const worker = await storage.createWorker(data);
       res.json(worker);
     } catch (error) {
@@ -304,9 +367,13 @@ export async function registerRoutes(
     }
   });
 
-  app.patch("/api/workers/:id", requireAuth, async (req, res) => {
+  app.patch("/api/workers/:id/status", requireAuth, async (req, res) => {
     try {
-      const worker = await storage.updateWorker(req.params.id, req.body);
+      const { status } = req.body;
+      if (!["available", "placed", "inactive"].includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+      const worker = await storage.updateWorkerStatus(req.params.id, status);
       res.json(worker);
     } catch (error) {
       res.status(500).json({ message: "Failed to update worker" });
@@ -324,7 +391,12 @@ export async function registerRoutes(
 
   app.post("/api/applications", requireAuth, async (req, res) => {
     try {
-      const data = insertApplicationSchema.parse(req.body);
+      const appData = {
+        jobId: req.body.jobId,
+        workerId: req.body.workerId,
+        status: "pending" as const,
+      };
+      const data = insertApplicationSchema.parse(appData);
       const application = await storage.createApplication(data);
       res.json(application);
     } catch (error) {
@@ -335,12 +407,63 @@ export async function registerRoutes(
     }
   });
 
-  app.patch("/api/applications/:id", requireAuth, async (req, res) => {
+  app.patch("/api/applications/:id/status", requireAuth, async (req, res) => {
     try {
-      const application = await storage.updateApplication(req.params.id, req.body);
+      const { status } = req.body;
+      if (!["pending", "selected", "rejected"].includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+      const application = await storage.updateApplicationStatus(req.params.id, status);
       res.json(application);
     } catch (error) {
       res.status(500).json({ message: "Failed to update application" });
+    }
+  });
+
+  app.get("/api/placements", requireAuth, async (req, res) => {
+    try {
+      const placements = await storage.getAllPlacements();
+      res.json(placements);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch placements" });
+    }
+  });
+
+  app.get("/api/placements/job/:jobId", requireAuth, async (req, res) => {
+    try {
+      const placements = await storage.getPlacementsByJob(req.params.jobId);
+      res.json(placements);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch placements" });
+    }
+  });
+
+  app.post("/api/placements", requireAuth, async (req, res) => {
+    try {
+      const placementData = {
+        jobId: req.body.jobId,
+        workerId: req.body.workerId,
+        businessConfirmation: "pending",
+        commissionStatus: "pending" as const,
+      };
+      const data = insertPlacementSchema.parse(placementData);
+      const placement = await storage.createPlacement(data);
+      await storage.updateWorkerStatus(req.body.workerId, "placed");
+      res.json(placement);
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: error.errors[0].message });
+      }
+      res.status(500).json({ message: "Failed to create placement" });
+    }
+  });
+
+  app.patch("/api/placements/:id/confirm", requireAuth, async (req, res) => {
+    try {
+      const placement = await storage.confirmPlacement(req.params.id);
+      res.json(placement);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to confirm placement" });
     }
   });
 
@@ -378,11 +501,17 @@ export async function registerRoutes(
   app.post("/api/workshops", requireAuth, async (req, res) => {
     try {
       const ch = await storage.getCommunityHeadByUserId(req.session.userId!);
-      const data = insertWorkshopSchema.parse({
-        ...req.body,
-        creatorId: req.session.userId,
-        communityHeadId: ch?.id,
-      });
+      const workshopData = {
+        creatorId: req.session.userId!,
+        communityHeadId: ch?.id || null,
+        topic: req.body.topic,
+        description: req.body.description || null,
+        scheduleDate: req.body.scheduleDate ? new Date(req.body.scheduleDate) : null,
+        location: req.body.location || null,
+        maxAttendees: req.body.maxAttendees || null,
+        status: "proposed" as const,
+      };
+      const data = insertWorkshopSchema.parse(workshopData);
       const workshop = await storage.createWorkshop(data);
       res.json(workshop);
     } catch (error) {
@@ -393,9 +522,13 @@ export async function registerRoutes(
     }
   });
 
-  app.patch("/api/workshops/:id", requireAuth, async (req, res) => {
+  app.patch("/api/workshops/:id/status", requireAuth, async (req, res) => {
     try {
-      const workshop = await storage.updateWorkshop(req.params.id, req.body);
+      const { status } = req.body;
+      if (!["proposed", "approved", "completed", "rejected"].includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+      const workshop = await storage.updateWorkshopStatus(req.params.id, status);
       res.json(workshop);
     } catch (error) {
       res.status(500).json({ message: "Failed to update workshop" });
@@ -423,9 +556,17 @@ export async function registerRoutes(
     }
   });
 
-  app.patch("/api/community-heads/:id", requireAuth, async (req, res) => {
+  app.patch("/api/community-heads/:id/status", requireAuth, async (req, res) => {
     try {
-      const ch = await storage.updateCommunityHead(req.params.id, req.body);
+      const user = await storage.getUser(req.session.userId!);
+      if (!user || user.role !== "MAIN_ADMIN") {
+        return res.status(403).json({ message: "Only admins can update community head status" });
+      }
+      const { status } = req.body;
+      if (!["pending", "active", "expired", "suspended"].includes(status)) {
+        return res.status(400).json({ message: "Invalid status" });
+      }
+      const ch = await storage.updateCommunityHeadStatus(req.params.id, status);
       res.json(ch);
     } catch (error) {
       res.status(500).json({ message: "Failed to update community head" });

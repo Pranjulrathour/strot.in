@@ -1,4 +1,4 @@
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 import { db } from "./db";
 import {
   users, communityHeads, donations, donationRequests, jobs,
@@ -23,15 +23,17 @@ export interface IStorage {
   getCommunityHeadByUserId(userId: string): Promise<CommunityHead | undefined>;
   getAllCommunityHeads(): Promise<CommunityHead[]>;
   createCommunityHead(ch: InsertCommunityHead): Promise<CommunityHead>;
-  updateCommunityHead(id: string, data: Partial<CommunityHead>): Promise<CommunityHead | undefined>;
+  updateCommunityHeadStatus(id: string, status: "pending" | "active" | "expired" | "suspended"): Promise<CommunityHead | undefined>;
 
   getAllDonations(): Promise<Donation[]>;
   getDonationsByDonor(donorId: string): Promise<Donation[]>;
   getDonationsByCommunityHead(chId: string): Promise<Donation[]>;
   getPendingDonations(): Promise<Donation[]>;
   createDonation(donation: InsertDonation): Promise<Donation>;
-  updateDonation(id: string, data: Partial<Donation>): Promise<Donation | undefined>;
+  claimDonation(id: string, chId: string): Promise<Donation | undefined>;
+  deliverDonation(id: string, proofImage?: string): Promise<Donation | undefined>;
 
+  getAllDonationRequests(): Promise<DonationRequest[]>;
   createDonationRequest(request: InsertDonationRequest): Promise<DonationRequest>;
   getDonationRequestsByCH(chId: string): Promise<DonationRequest[]>;
 
@@ -39,27 +41,29 @@ export interface IStorage {
   getJobsByBusiness(businessId: string): Promise<Job[]>;
   getOpenJobs(): Promise<Job[]>;
   createJob(job: InsertJob): Promise<Job>;
-  updateJob(id: string, data: Partial<Job>): Promise<Job | undefined>;
+  updateJobStatus(id: string, status: "open" | "filled" | "closed"): Promise<Job | undefined>;
 
   getWorkersByCommunityHead(chId: string): Promise<WorkerProfile[]>;
   getAllWorkers(): Promise<WorkerProfile[]>;
   getWorker(id: string): Promise<WorkerProfile | undefined>;
   createWorker(worker: InsertWorkerProfile): Promise<WorkerProfile>;
-  updateWorker(id: string, data: Partial<WorkerProfile>): Promise<WorkerProfile | undefined>;
+  updateWorkerStatus(id: string, status: "available" | "placed" | "inactive"): Promise<WorkerProfile | undefined>;
 
   getApplicationsByJob(jobId: string): Promise<Application[]>;
   getApplicationsByWorker(workerId: string): Promise<Application[]>;
   createApplication(app: InsertApplication): Promise<Application>;
-  updateApplication(id: string, data: Partial<Application>): Promise<Application | undefined>;
+  updateApplicationStatus(id: string, status: "pending" | "selected" | "rejected"): Promise<Application | undefined>;
 
+  getAllPlacements(): Promise<Placement[]>;
   createPlacement(placement: InsertPlacement): Promise<Placement>;
   getPlacementsByJob(jobId: string): Promise<Placement[]>;
+  confirmPlacement(id: string): Promise<Placement | undefined>;
 
   getAllWorkshops(): Promise<Workshop[]>;
   getWorkshopsByCommunityHead(chId: string): Promise<Workshop[]>;
   getWorkshopsByCreator(creatorId: string): Promise<Workshop[]>;
   createWorkshop(workshop: InsertWorkshop): Promise<Workshop>;
-  updateWorkshop(id: string, data: Partial<Workshop>): Promise<Workshop | undefined>;
+  updateWorkshopStatus(id: string, status: "proposed" | "approved" | "completed" | "rejected"): Promise<Workshop | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -97,8 +101,15 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async updateCommunityHead(id: string, data: Partial<CommunityHead>): Promise<CommunityHead | undefined> {
-    const [updated] = await db.update(communityHeads).set(data).where(eq(communityHeads.id, id)).returning();
+  async updateCommunityHeadStatus(id: string, status: "pending" | "active" | "expired" | "suspended"): Promise<CommunityHead | undefined> {
+    const updateData: Partial<CommunityHead> = { status };
+    if (status === "active") {
+      updateData.tenureStart = new Date();
+      const tenureEnd = new Date();
+      tenureEnd.setFullYear(tenureEnd.getFullYear() + 1);
+      updateData.tenureEnd = tenureEnd;
+    }
+    const [updated] = await db.update(communityHeads).set(updateData).where(eq(communityHeads.id, id)).returning();
     return updated;
   }
 
@@ -123,9 +134,26 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async updateDonation(id: string, data: Partial<Donation>): Promise<Donation | undefined> {
-    const [updated] = await db.update(donations).set(data).where(eq(donations.id, id)).returning();
+  async claimDonation(id: string, chId: string): Promise<Donation | undefined> {
+    const [updated] = await db.update(donations).set({
+      communityHeadId: chId,
+      status: "claimed",
+      claimedAt: new Date(),
+    }).where(eq(donations.id, id)).returning();
     return updated;
+  }
+
+  async deliverDonation(id: string, proofImage?: string): Promise<Donation | undefined> {
+    const [updated] = await db.update(donations).set({
+      status: "delivered",
+      deliveredAt: new Date(),
+      proofImage: proofImage || null,
+    }).where(eq(donations.id, id)).returning();
+    return updated;
+  }
+
+  async getAllDonationRequests(): Promise<DonationRequest[]> {
+    return db.select().from(donationRequests).orderBy(desc(donationRequests.createdAt));
   }
 
   async createDonationRequest(request: InsertDonationRequest): Promise<DonationRequest> {
@@ -154,8 +182,8 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async updateJob(id: string, data: Partial<Job>): Promise<Job | undefined> {
-    const [updated] = await db.update(jobs).set(data).where(eq(jobs.id, id)).returning();
+  async updateJobStatus(id: string, status: "open" | "filled" | "closed"): Promise<Job | undefined> {
+    const [updated] = await db.update(jobs).set({ status }).where(eq(jobs.id, id)).returning();
     return updated;
   }
 
@@ -177,8 +205,8 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async updateWorker(id: string, data: Partial<WorkerProfile>): Promise<WorkerProfile | undefined> {
-    const [updated] = await db.update(workerProfiles).set(data).where(eq(workerProfiles.id, id)).returning();
+  async updateWorkerStatus(id: string, status: "available" | "placed" | "inactive"): Promise<WorkerProfile | undefined> {
+    const [updated] = await db.update(workerProfiles).set({ status }).where(eq(workerProfiles.id, id)).returning();
     return updated;
   }
 
@@ -195,9 +223,13 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async updateApplication(id: string, data: Partial<Application>): Promise<Application | undefined> {
-    const [updated] = await db.update(applications).set(data).where(eq(applications.id, id)).returning();
+  async updateApplicationStatus(id: string, status: "pending" | "selected" | "rejected"): Promise<Application | undefined> {
+    const [updated] = await db.update(applications).set({ status }).where(eq(applications.id, id)).returning();
     return updated;
+  }
+
+  async getAllPlacements(): Promise<Placement[]> {
+    return db.select().from(placements).orderBy(desc(placements.createdAt));
   }
 
   async createPlacement(placement: InsertPlacement): Promise<Placement> {
@@ -207,6 +239,13 @@ export class DatabaseStorage implements IStorage {
 
   async getPlacementsByJob(jobId: string): Promise<Placement[]> {
     return db.select().from(placements).where(eq(placements.jobId, jobId)).orderBy(desc(placements.createdAt));
+  }
+
+  async confirmPlacement(id: string): Promise<Placement | undefined> {
+    const [updated] = await db.update(placements).set({
+      businessConfirmation: "confirmed",
+    }).where(eq(placements.id, id)).returning();
+    return updated;
   }
 
   async getAllWorkshops(): Promise<Workshop[]> {
@@ -226,8 +265,8 @@ export class DatabaseStorage implements IStorage {
     return created;
   }
 
-  async updateWorkshop(id: string, data: Partial<Workshop>): Promise<Workshop | undefined> {
-    const [updated] = await db.update(workshops).set(data).where(eq(workshops.id, id)).returning();
+  async updateWorkshopStatus(id: string, status: "proposed" | "approved" | "completed" | "rejected"): Promise<Workshop | undefined> {
+    const [updated] = await db.update(workshops).set({ status }).where(eq(workshops.id, id)).returning();
     return updated;
   }
 }
