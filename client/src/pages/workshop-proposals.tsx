@@ -10,7 +10,8 @@ import { Label } from "@/components/ui/label";
 import { EmptyState } from "@/components/empty-state";
 import { CardSkeleton } from "@/components/loading-skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { GraduationCap, MapPin, Users, Phone, Mail, User, Calendar, Check, X, ExternalLink } from "lucide-react";
+import { GraduationCap, MapPin, Users, Mail, User, Calendar, Check, X, ExternalLink } from "lucide-react";
+import { CopyablePhone } from "@/components/copyable-phone";
 import type { Workshop } from "@shared/schema";
 
 interface WorkshopWithCreator extends Workshop {
@@ -154,13 +155,7 @@ export default function WorkshopProposalsPage() {
                           <span className="font-medium">{workshop.creator?.name || "Unknown"}</span>
                         </div>
                         {workshop.creator?.phone && (
-                          <a 
-                            href={`tel:${workshop.creator.phone}`}
-                            className="flex items-center gap-2 text-sm text-ch-600 dark:text-ch-400 hover:underline"
-                          >
-                            <Phone className="h-4 w-4" />
-                            {workshop.creator.phone}
-                          </a>
+                          <CopyablePhone phone={workshop.creator.phone} />
                         )}
                         {workshop.creator?.email && (
                           <a 

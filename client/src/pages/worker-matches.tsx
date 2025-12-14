@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/empty-state";
 import { CardSkeleton } from "@/components/loading-skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Users, Check, X, Briefcase } from "lucide-react";
+import { CopyablePhone } from "@/components/copyable-phone";
 import type { Application, WorkerProfile, Job } from "@shared/schema";
 
 interface ApplicationWithDetails extends Application {
@@ -105,6 +106,9 @@ export default function WorkerMatchesPage() {
                             </div>
                             <StatusBadge status={app.status} />
                           </div>
+                          {(app.worker as any)?.phone && (
+                            <CopyablePhone phone={(app.worker as any).phone} className="mt-2" />
+                          )}
                           {app.worker?.experience && (
                             <p className="text-sm text-muted-foreground mt-2">
                               {app.worker.experience}
@@ -167,6 +171,9 @@ export default function WorkerMatchesPage() {
                         <p className="text-sm text-muted-foreground">
                           {app.worker?.skill} · {app.job?.title}
                         </p>
+                        {(app.worker as any)?.phone && (
+                          <CopyablePhone phone={(app.worker as any).phone} className="mt-1" />
+                        )}
                       </div>
                       <StatusBadge status={app.status} />
                     </div>

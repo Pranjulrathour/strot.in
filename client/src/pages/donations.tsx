@@ -7,7 +7,8 @@ import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
 import { CardSkeleton } from "@/components/loading-skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { Heart, Package, CheckCircle, Clock, Camera, MapPin, ExternalLink, Phone } from "lucide-react";
+import { Heart, Package, CheckCircle, Clock, Camera, MapPin, ExternalLink } from "lucide-react";
+import { CopyablePhone } from "@/components/copyable-phone";
 import type { Donation } from "@shared/schema";
 
 export default function DonationsPage() {
@@ -146,13 +147,7 @@ export default function DonationsPage() {
                           <p className="text-sm text-muted-foreground mt-2">{donation.description}</p>
                         )}
                         {(donation as any).phone && (
-                          <a
-                            href={`tel:${(donation as any).phone}`}
-                            className="flex items-center gap-1.5 text-sm text-primary hover:underline mt-2"
-                          >
-                            <Phone className="h-3.5 w-3.5" />
-                            {(donation as any).phone}
-                          </a>
+                          <CopyablePhone phone={(donation as any).phone} label="Donor:" className="mt-2" />
                         )}
                         {(donation as any).location && (
                           <div className="flex items-center gap-2 text-sm mt-2">

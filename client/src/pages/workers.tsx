@@ -16,7 +16,8 @@ import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
 import { CardSkeleton } from "@/components/loading-skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { Users, Plus, Upload, X, Phone } from "lucide-react";
+import { Users, Plus, Upload, X } from "lucide-react";
+import { CopyablePhone } from "@/components/copyable-phone";
 import { LocationPicker } from "@/components/location-picker";
 import type { WorkerProfile } from "@shared/schema";
 
@@ -370,13 +371,7 @@ export default function WorkersPage() {
                       <StatusBadge status={worker.status} />
                     </div>
                     {(worker as any).phone && (
-                      <a
-                        href={`tel:${(worker as any).phone}`}
-                        className="flex items-center gap-1.5 text-sm text-primary hover:underline mt-2"
-                      >
-                        <Phone className="h-3.5 w-3.5" />
-                        {(worker as any).phone}
-                      </a>
+                      <CopyablePhone phone={(worker as any).phone} className="mt-2" />
                     )}
                     {worker.experience && (
                       <p className="text-sm text-muted-foreground mt-2 line-clamp-2">

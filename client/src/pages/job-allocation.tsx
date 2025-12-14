@@ -10,7 +10,8 @@ import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
 import { CardSkeleton } from "@/components/loading-skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { Briefcase, MapPin, Users, Check, Sparkles, Clock, CheckCircle, XCircle, Phone } from "lucide-react";
+import { Briefcase, MapPin, Users, Check, Sparkles, Clock, CheckCircle, XCircle } from "lucide-react";
+import { CopyablePhone } from "@/components/copyable-phone";
 import type { Job, WorkerProfile, Application } from "@shared/schema";
 
 interface JobWithMatching extends Job {
@@ -309,13 +310,7 @@ export default function JobAllocationPage() {
                         {worker.skill} · {worker.age} years
                       </p>
                       {(worker as any).phone && (
-                        <a
-                          href={`tel:${(worker as any).phone}`}
-                          className="flex items-center gap-1 text-sm text-primary hover:underline mt-1"
-                        >
-                          <Phone className="h-3 w-3" />
-                          {(worker as any).phone}
-                        </a>
+                        <CopyablePhone phone={(worker as any).phone} className="mt-1" />
                       )}
                       {worker.experience && (
                         <p className="text-sm text-muted-foreground line-clamp-1 mt-1">
