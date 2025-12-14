@@ -16,6 +16,7 @@ import { EmptyState } from "@/components/empty-state";
 import { CardSkeleton } from "@/components/loading-skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { GraduationCap, Plus, Calendar, MapPin, Users, CheckCircle, XCircle, ExternalLink } from "lucide-react";
+import { CopyablePhone } from "@/components/copyable-phone";
 import type { Workshop } from "@shared/schema";
 
 const workshopSchema = z.object({
@@ -32,6 +33,9 @@ export default function WorkshopsPage() {
   const { user } = useAuth();
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedWorkshop, setSelectedWorkshop] = useState<Workshop | null>(null);
+  const [isReviewOpen, setIsReviewOpen] = useState(false);
+  const [reviewDate, setReviewDate] = useState("");
 
   const isCH = user?.role === "COMMUNITY_HEAD";
 
@@ -70,20 +74,25 @@ export default function WorkshopsPage() {
     },
   });
 
-  const approveMutation = useMutation({
-    mutationFn: async ({ id, approve }: { id: string; approve: boolean }) => {
-      return apiRequest("PATCH", `/api/workshops/${id}`, {
-        status: approve ? "approved" : "rejected",
+  const reviewMutation = useMutation({
+    mutationFn: async ({ id, status, scheduleDate }: { id: string; status: "approved" | "rejected"; scheduleDate?: string }) => {
+      return apiRequest("PATCH", `/api/workshops/${id}/review`, {
+        status,
+        scheduleDate: scheduleDate || null,
       });
     },
-    onSuccess: (_, { approve }) => {
+    onSuccess: (_, { status }) => {
       queryClient.invalidateQueries({ queryKey: ["/api/workshops/ch"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/workshops"] });
       toast({
-        title: approve ? "Workshop approved!" : "Workshop rejected",
-        description: approve
+        title: status === "approved" ? "Workshop approved!" : "Workshop rejected",
+        description: status === "approved"
           ? "The workshop has been scheduled."
           : "The proposal has been declined.",
       });
+      setIsReviewOpen(false);
+      setSelectedWorkshop(null);
+      setReviewDate("");
     },
     onError: (error) => {
       toast({
@@ -93,6 +102,12 @@ export default function WorkshopsPage() {
       });
     },
   });
+
+  const openReview = (workshop: Workshop) => {
+    setSelectedWorkshop(workshop);
+    setReviewDate(workshop.scheduleDate ? String(workshop.scheduleDate).slice(0, 10) : "");
+    setIsReviewOpen(true);
+  };
 
   const formatDate = (date: string | Date | null) => {
     if (!date) return "TBD";
@@ -301,26 +316,18 @@ export default function WorkshopsPage() {
                           {workshop.maxAttendees} max
                         </span>
                       </div>
+                      {(workshop as any).phone && (
+                        <CopyablePhone phone={(workshop as any).phone} label="Tutor:" className="mt-2" />
+                      )}
                     </div>
                     <div className="flex gap-2">
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => approveMutation.mutate({ id: workshop.id, approve: false })}
-                        disabled={approveMutation.isPending}
-                        data-testid={`button-reject-workshop-${workshop.id}`}
+                        onClick={() => openReview(workshop)}
+                        data-testid={`button-review-workshop-${workshop.id}`}
                       >
-                        <XCircle className="h-4 w-4 mr-1" />
-                        Reject
-                      </Button>
-                      <Button
-                        size="sm"
-                        onClick={() => approveMutation.mutate({ id: workshop.id, approve: true })}
-                        disabled={approveMutation.isPending}
-                        data-testid={`button-approve-workshop-${workshop.id}`}
-                      >
-                        <CheckCircle className="h-4 w-4 mr-1" />
-                        Approve
+                        Review
                       </Button>
                     </div>
                   </div>
@@ -329,6 +336,64 @@ export default function WorkshopsPage() {
             </div>
           </CardContent>
         </Card>
+      )}
+
+      {isCH && (
+        <Dialog open={isReviewOpen} onOpenChange={setIsReviewOpen}>
+          <DialogContent className="sm:max-w-lg">
+            <DialogHeader>
+              <DialogTitle>Review Workshop</DialogTitle>
+              <DialogDescription>
+                Approve or reject this proposal. If approving, set the workshop date.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-3">
+              <div>
+                <p className="font-medium">{selectedWorkshop?.topic}</p>
+                <p className="text-sm text-muted-foreground">{selectedWorkshop?.location}</p>
+              </div>
+
+              <div className="space-y-2">
+                <FormLabel>Workshop Date (required for approval)</FormLabel>
+                <Input
+                  type="date"
+                  value={reviewDate}
+                  onChange={(e) => setReviewDate(e.target.value)}
+                  data-testid="input-review-workshop-date"
+                />
+              </div>
+
+              <div className="flex gap-2 pt-2">
+                <Button
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() =>
+                    selectedWorkshop &&
+                    reviewMutation.mutate({ id: selectedWorkshop.id, status: "rejected" })
+                  }
+                  disabled={reviewMutation.isPending}
+                  data-testid="button-review-reject"
+                >
+                  <XCircle className="h-4 w-4 mr-2" />
+                  Reject
+                </Button>
+                <Button
+                  className="flex-1"
+                  onClick={() =>
+                    selectedWorkshop &&
+                    reviewMutation.mutate({ id: selectedWorkshop.id, status: "approved", scheduleDate: reviewDate })
+                  }
+                  disabled={reviewMutation.isPending || !reviewDate}
+                  data-testid="button-review-approve"
+                >
+                  <CheckCircle className="h-4 w-4 mr-2" />
+                  Approve
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       )}
 
       {isLoading ? (

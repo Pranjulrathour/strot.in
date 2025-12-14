@@ -21,6 +21,7 @@ import {
   TrendingUp,
   UserPlus,
 } from "lucide-react";
+import { CopyablePhone } from "@/components/copyable-phone";
 import type { Donation, Job, WorkerProfile, Workshop, CommunityHead } from "@shared/schema";
 
 export default function CHDashboard() {
@@ -366,6 +367,9 @@ export default function CHDashboard() {
                           <p className="text-sm text-muted-foreground">
                             {workshop.location} · {workshop.maxAttendees} max attendees
                           </p>
+                          {(workshop as any).phone && (
+                            <CopyablePhone phone={(workshop as any).phone} label="Tutor:" className="mt-2" />
+                          )}
                           {workshop.scheduleDate && (
                             <p className="text-sm text-primary mt-1">
                               {new Date(workshop.scheduleDate).toLocaleDateString()}
