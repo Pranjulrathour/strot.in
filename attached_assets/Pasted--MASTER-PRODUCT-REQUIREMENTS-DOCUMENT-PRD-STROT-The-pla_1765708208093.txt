@@ -1,0 +1,523 @@
+🏛️ MASTER PRODUCT REQUIREMENTS DOCUMENT (PRD)
+STROT – “The platform that gives Bal, Buddhi, and Vidya.”
+(A transformative socio‑economic upliftment platform for India)
+
+1. 📘 PRODUCT OVERVIEW
+1.1 What is STROT?
+STROT is an integrated social platform designed to uplift slum communities through:
+
+✔ BAL – Donation Module
+Ensures delivery of basic necessities like food, clothes, utilities.
+
+✔ BUDDHI – Employment Module
+Creates verified employment opportunities for skilled and semi‑skilled workers in slum communities.
+
+✔ VIDYA – Upskilling Module
+Long‑term skill development programs delivered through workshops, professionals, and instructors.
+
+The vision of STROT is to break generational poverty using a structured ladder:
+
+BAL ➝ BUDDHI ➝ VIDYA ➝ UPLIFTMENT
+
+2. 🎯 PRODUCT VISION
+To create a self-sustaining upliftment ecosystem where:
+
+Donors give responsibly
+
+Businesses get reliable workers
+
+Slum communities receive opportunities
+
+Education unlocks long-term transformation
+
+STROT focuses on minimal friction, high transparency, and community-driven governance.
+
+3. 🧍‍♂️🧍‍♀️ USER PERSONAS
+3.1 Community Head (CH)
+The operational backbone of STROT for each locality.
+
+Goals:
+
+Manage donations
+
+Identify skilled individuals
+
+Approve workshops
+
+Coordinate job matching
+
+Provide feedback reports
+
+Pain Points:
+
+Need easy-to-use dashboards
+
+Low digital literacy
+
+Need transparency to avoid corruption allegations
+
+3.2 Donor (User)
+Any individual who wants to donate items.
+
+Goals:
+
+List items quickly
+
+Ensure items reach real needy people
+
+Track donation history
+
+3.3 Business / Job Provider
+MSMEs, factories, stores, agencies, etc.
+
+Goals:
+
+Hire trustworthy skill-based workers
+
+Reduce recruitment friction
+
+Pay small commissions
+
+3.4 Main Admin (STROT Org)
+Controls the platform.
+
+Goals:
+
+Approve CH
+
+Manage tenure
+
+Enforce security and ethics
+
+Analyze performance
+
+4. 🧩 KEY FEATURES SUMMARY
+Module	Features
+BAL (Donation)	Donor listing, CH claiming, proof photos, logistics integration
+BUDDHI (Employment)	Job posts, worker profiles, matching flow, business confirmation, commission system
+VIDYA (Upskilling)	Workshop creation, CH approval, attendance tracking, skill progression
+Core System	Role-based dashboards, Supabase authentication, secure data, minimal UI
+5. 🗺️ IDEAL USER FLOW (FINAL + OPTIMIZED)
+5.1 Donor Flow (BAL)
+User logs in
+
+Clicks Donate
+
+Uploads item images + selects category
+
+Chooses locality OR lets CH pick
+
+CH gets notification
+
+CH claims → picks up item OR uses logistics partner
+
+CH delivers → uploads proof photo
+
+Donor sees status as Delivered
+
+5.2 Business Flow (BUDDHI)
+Business signs up
+
+Posts job requirements
+
+CH receives notification
+
+CH selects worker(s)
+
+Sends profiles
+
+Business reviews → selects → confirms
+
+Commission auto-invoice generates
+
+Placement is recorded
+
+5.3 Upskilling (VIDYA)
+Instructor / NGO / Individual volunteers apply to host workshop
+
+CH reviews → approves
+
+Workshop scheduled
+
+Attendance tracked
+
+Skill record updated
+
+5.4 Community Head Flow
+The CH dashboard shows:
+
+🔸 Live Donations
+
+🔸 Needed Items
+
+🔸 Job Posts
+
+🔸 Worker Profiles
+
+🔸 Workshops
+
+🔸 Performance Score
+
+CH can perform:
+
+Approvals
+
+Claims
+
+Uploading photos
+
+Selecting candidates
+
+Raising requests
+
+6. 🏗️ SYSTEM ARCHITECTURE (Tech Overview)
+Frontend:
+React.js
+
+TypeScript
+
+Tailwind CSS
+
+React Query
+
+React Router
+
+Zustand (state store)
+
+Backend:
+Supabase Auth
+
+Supabase Database
+
+Supabase Storage
+
+Edge Functions
+
+Row-Level Security (RLS)
+
+Postgres Policies
+
+Deployment:
+Replit for development
+
+Supabase hosting
+
+Vercel or Netlify for deployment
+
+7. 🗄️ DATABASE SCHEMA (Supabase)
+users
+id (uuid) PK
+role (MAIN_ADMIN / CH / BUSINESS / USER)
+name
+phone
+email
+aadhaar (optional)
+created_at
+community_heads
+id references users(id)
+locality
+tenure_start
+tenure_end
+performance_score
+status
+donations
+id
+donor_id
+community_head_id
+item_name
+quantity
+images[]
+status (pending / claimed / delivered)
+created_at
+donation_requests
+id
+community_head_id
+title
+description
+status
+created_at
+jobs
+id
+business_id
+title
+description
+required_skill
+salary_range
+location
+status
+created_at
+worker_profiles
+id
+community_head_id
+name
+age
+skill
+photos[]
+experience
+status
+created_at
+applications
+id
+job_id
+worker_id
+status
+created_at
+placements
+id
+job_id
+worker_id
+business_confirmation
+commission_status
+created_at
+workshops
+id
+creator_id
+community_head_id
+topic
+description
+schedule_date
+status
+created_at
+8. 📑 UI REQUIREMENTS (2025 Design Trends)
+Style: Apple-like Minimalism
+White background
+
+Soft grey gradients
+
+Rounded corners (10–14px)
+
+Ample spacing
+
+San-serif clean fonts (Inter, SF Pro)
+
+Subtle drop shadows
+
+No bright colors; muted palette
+
+Component Behavior
+Skeleton loaders for all dynamic content
+
+Card-based layouts
+
+Slide-up sheets for mobile
+
+Fixed bottom navbar for mobile
+
+Toast notifications
+
+Accessible contrast
+
+9. 🧰 FEATURE SPECIFICATIONS (Detailed)
+9.1 Authentication
+Phone OTP
+
+Aadhaar optional
+
+Business requires PAN + GST
+
+CH requires manual approval
+
+9.2 Donation Module (BAL)
+Functionalities:
+Create donation
+
+CH claim
+
+Delivery proof
+
+Logistics partner option
+
+Donor history
+
+Constraints:
+Donor cannot see CH name
+
+Donor cannot message CH directly
+
+CH must upload proof photo
+
+9.3 Employment Module (BUDDHI)
+Functionalities:
+Business job posting
+
+CH worker selection
+
+Worker photo upload
+
+Business review
+
+Constraints:
+Workers cannot apply themselves
+
+CH can upload unlimited workers
+
+Commission invoicing auto-generated
+
+9.4 Upskilling Module (VIDYA)
+Functionalities:
+Workshop proposals
+
+CH approval
+
+Attendance tracking
+
+Skill progression logs
+
+10. 🔐 PRIVACY & SAFETY
+Required:
+Do NOT store unnecessary data
+
+Protect identity of slum residents
+
+Mask phone numbers
+
+Child safety filters
+
+Delete personal data on request
+
+Corruption prevention logs
+
+11. ⚙️ NON-FUNCTIONAL REQUIREMENTS (NFRs)
+Performance:
+<200ms response
+
+60 FPS UI
+
+Should load on low-end 4G devices
+
+Scalability:
+Multi-city support
+
+Partitioning by locality
+
+Security:
+RLS everywhere
+
+KV store for session tokens
+
+Rate limiting on all endpoints
+
+Maintainability:
+Clear folder structure
+
+Modular services
+
+AI-friendly code
+
+12. 🚀 MVP DEVELOPMENT ROADMAP (2 Days – AI BUILD)
+Day 1
+Supabase schema generation
+
+React project setup
+
+Auth + routing + layout
+
+Dashboard templates
+
+Donation module core screens
+
+Business job posting
+
+Day 2
+Worker profiles
+
+CH dashboard logic
+
+Placement flow
+
+Workshops MVP
+
+Polishing & deployment
+
+This roadmap intentionally fits AI coding speeds.
+
+13. 📦 COMPONENT STRUCTURE (Frontend)
+src/
+ ├─ components/
+ │   ├─ Button.tsx
+ │   ├─ Input.tsx
+ │   ├─ Card.tsx
+ │   ├─ Navbar.tsx
+ │   ├─ Modal.tsx
+ │   ├─ Tabs.tsx
+ │
+ ├─ modules/
+ │   ├─ bal/
+ │   ├─ buddhi/
+ │   ├─ vidya/
+ │
+ ├─ services/
+ │   ├─ supabaseClient.ts
+ │   ├─ donationService.ts
+ │   ├─ jobService.ts
+ │   ├─ workerService.ts
+ │   ├─ workshopService.ts
+ │
+ ├─ store/
+ │   ├─ userStore.ts
+ │
+ ├─ pages/
+ ├─ App.tsx
+14. 📡 API SPEC (Supabase Edge Functions)
+ef-create-placement
+Validate business confirmation
+
+Generate commission invoice
+
+Update worker status
+
+ef-expire-tenure
+Runs daily
+
+Marks CH expired
+
+Alerts admin
+
+ef-verify-donation
+Validates donation delivery proof
+
+15. 📊 KPIs & ANALYTICS
+CH Metrics:
+Donations delivered
+
+Workers placed
+
+Workshops approved
+
+Community rating
+
+Business Metrics:
+Time to hire
+
+Quality of hire
+
+Platform Metrics:
+Active localities
+
+Items donated
+
+Jobs created
+
+Skill hours delivered
+
+16. 📌 RISKS & MITIGATION
+Risk	Mitigation
+CH corruption	Tenure + performance score + audits
+Worker exploitation	Business verification + rating
+Donors mistrust	Delivery proof system
+Low literacy	Ultra-simple UI
+Fraud jobs	PAN + GST + admin approval
+17. 🧾 ACCEPTANCE CRITERIA
+MVP must:
+✔ Support 4 roles (Admin, CH, Business, User)
+✔ Allow donations, jobs, workshops
+✔ Allow CH to manage flows
+✔ Be responsive mobile-first
+✔ Have functional dashboards
+✔ Enforce RLS security
+✔ Be deployable from Replit
+
+18. 🎉 FINAL STATEMENT
+This PRD is optimized for AI-assisted development with Windsurf, GPT‑5.2, and Claude Opus 4.5.
+It includes the entire functional + technical + UX + architecture blueprint needed to complete STROT's MVP within 2 days.
+
