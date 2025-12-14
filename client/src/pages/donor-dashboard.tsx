@@ -7,7 +7,7 @@ import { StatCard } from "@/components/stat-card";
 import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
 import { StatCardSkeleton, CardSkeleton } from "@/components/loading-skeleton";
-import { Heart, Package, CheckCircle, Clock, Plus, ArrowRight } from "lucide-react";
+import { Heart, Package, CheckCircle, Clock, Plus, ArrowRight, GraduationCap } from "lucide-react";
 import type { Donation } from "@shared/schema";
 
 export default function DonorDashboard() {
@@ -27,24 +27,40 @@ export default function DonorDashboard() {
   const recentDonations = donations?.slice(0, 5) || [];
 
   return (
-    <div className="space-y-6 pb-20 lg:pb-0">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight lg:text-3xl">
-            Welcome back, {user?.name?.split(" ")[0]}
-          </h1>
-          <p className="text-muted-foreground">
-            Your donations are making a difference in communities
-          </p>
+    <div className="space-y-8 pb-20 lg:pb-0">
+      {/* Hero Section - Clean Saffron */}
+      <div className="relative overflow-hidden rounded-3xl bg-primary border border-primary p-6 lg:p-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Heart className="h-5 w-5 text-white" />
+              <span className="text-sm font-medium text-white/90">Making a difference</span>
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">
+              Welcome back, {user?.name?.split(" ")[0]}
+            </h1>
+            <p className="text-white/90 max-w-md">
+              Your donations are making a difference in communities across India
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="outline" className="rounded-xl border-2 border-white/60 text-white bg-white/10 hover:bg-white/20" asChild>
+              <Link href="/propose-workshop">
+                <GraduationCap className="h-4 w-4 mr-2" />
+                Teach a Skill
+              </Link>
+            </Button>
+            <Button size="lg" variant="secondary" className="rounded-xl bg-white text-primary border-2 border-white/60 hover:bg-white/90" asChild data-testid="button-donate">
+              <Link href="/donate">
+                <Plus className="h-4 w-4 mr-2" />
+                Donate Items
+              </Link>
+            </Button>
+          </div>
         </div>
-        <Button asChild data-testid="button-donate">
-          <Link href="/donate">
-            <Plus className="h-4 w-4 mr-2" />
-            Donate Items
-          </Link>
-        </Button>
       </div>
 
+      {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {isLoading ? (
           <>
@@ -131,8 +147,8 @@ export default function DonorDashboard() {
                     className="flex items-center gap-4 p-3 rounded-lg bg-muted/30 hover-elevate"
                     data-testid={`donation-item-${donation.id}`}
                   >
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                      <Heart className="h-5 w-5 text-primary" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
+                      <Heart className="h-5 w-5 text-primary-foreground" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="font-medium truncate">{donation.itemName}</p>

@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Briefcase } from "lucide-react";
+import { LocationPicker } from "@/components/location-picker";
+import { useState } from "react";
 import { Link } from "wouter";
 
 const jobSchema = z.object({
@@ -20,6 +22,8 @@ const jobSchema = z.object({
   requiredSkill: z.string().min(1, "Please select a required skill"),
   salaryRange: z.string().optional(),
   location: z.string().min(2, "Location is required"),
+  latitude: z.number().nullable().optional(),
+  longitude: z.number().nullable().optional(),
 });
 
 type JobForm = z.infer<typeof jobSchema>;
@@ -48,6 +52,7 @@ const skills = [
 export default function PostJobPage() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
+  const [coordinates, setCoordinates] = useState<{ lat: number | null; lng: number | null }>({ lat: null, lng: null });
 
   const form = useForm<JobForm>({
     resolver: zodResolver(jobSchema),
@@ -57,12 +62,18 @@ export default function PostJobPage() {
       requiredSkill: "",
       salaryRange: "",
       location: "",
+      latitude: null,
+      longitude: null,
     },
   });
 
   const mutation = useMutation({
     mutationFn: async (data: JobForm) => {
-      return apiRequest("POST", "/api/jobs", data);
+      return apiRequest("POST", "/api/jobs", {
+        ...data,
+        latitude: coordinates.lat,
+        longitude: coordinates.lng,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/jobs/my"] });
@@ -173,10 +184,11 @@ export default function PostJobPage() {
                   <FormItem>
                     <FormLabel>Work Location</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="e.g., Mumbai, Andheri West"
-                        data-testid="input-location"
-                        {...field}
+                      <LocationPicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        onCoordinatesChange={(lat, lng) => setCoordinates({ lat, lng })}
+                        placeholder="Enter location or auto-detect"
                       />
                     </FormControl>
                     <FormMessage />

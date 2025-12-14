@@ -12,7 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Heart, Briefcase, GraduationCap, Eye, EyeOff } from "lucide-react";
 
 const loginSchema = z.object({
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
+  email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
@@ -28,7 +28,7 @@ export default function LoginPage() {
   const form = useForm<LoginForm>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      phone: "",
+      email: "",
       password: "",
     },
   });
@@ -36,9 +36,9 @@ export default function LoginPage() {
   async function onSubmit(data: LoginForm) {
     setIsLoading(true);
     try {
-      await login(data.phone, data.password);
+      await login(data.email, data.password);
       toast({ title: "Welcome back!", description: "You have successfully logged in." });
-      setLocation("/");
+      setLocation("/", { replace: true });
     } catch (error) {
       toast({
         title: "Login failed",
@@ -103,22 +103,22 @@ export default function LoginPage() {
           <Card className="border-0 shadow-none lg:border lg:shadow-sm">
             <CardHeader className="space-y-1 px-0 lg:px-6">
               <CardTitle className="text-2xl font-semibold">Welcome back</CardTitle>
-              <CardDescription>Enter your phone number to sign in to your account</CardDescription>
+              <CardDescription>Enter your email to sign in to your account</CardDescription>
             </CardHeader>
             <CardContent className="px-0 lg:px-6">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="phone"
+                    name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
+                        <FormLabel>Email</FormLabel>
                         <FormControl>
                           <Input
-                            type="tel"
-                            placeholder="Enter your phone number"
-                            data-testid="input-phone"
+                            type="email"
+                            placeholder="Enter your email"
+                            data-testid="input-email"
                             {...field}
                           />
                         </FormControl>

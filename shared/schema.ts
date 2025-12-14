@@ -4,7 +4,7 @@ import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
-export const userRoleEnum = pgEnum("user_role", ["MAIN_ADMIN", "COMMUNITY_HEAD", "BUSINESS", "DONOR"]);
+export const userRoleEnum = pgEnum("user_role", ["MAIN_ADMIN", "COMMUNITY_HEAD", "BUSINESS", "DONOR", "MASTER_ADMIN", "SUPER_ADMIN"]);
 export const donationStatusEnum = pgEnum("donation_status", ["pending", "claimed", "delivered"]);
 export const jobStatusEnum = pgEnum("job_status", ["open", "filled", "closed"]);
 export const workerStatusEnum = pgEnum("worker_status", ["available", "placed", "inactive"]);

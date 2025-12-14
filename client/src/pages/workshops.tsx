@@ -15,7 +15,7 @@ import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
 import { CardSkeleton } from "@/components/loading-skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { GraduationCap, Plus, Calendar, MapPin, Users, CheckCircle, XCircle } from "lucide-react";
+import { GraduationCap, Plus, Calendar, MapPin, Users, CheckCircle, XCircle, ExternalLink } from "lucide-react";
 import type { Workshop } from "@shared/schema";
 
 const workshopSchema = z.object({
@@ -280,6 +280,17 @@ export default function WorkshopsPage() {
                         <span className="flex items-center gap-1">
                           <MapPin className="h-3.5 w-3.5" />
                           {workshop.location}
+                          {(workshop as any).latitude && (workshop as any).longitude && (
+                            <a
+                              href={`https://www.google.com/maps?q=${(workshop as any).latitude},${(workshop as any).longitude}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary hover:underline ml-1"
+                              title="Open in Google Maps"
+                            >
+                              <ExternalLink className="h-3 w-3" />
+                            </a>
+                          )}
                         </span>
                         <span className="flex items-center gap-1">
                           <Calendar className="h-3.5 w-3.5" />

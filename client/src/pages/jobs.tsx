@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
 import { CardSkeleton } from "@/components/loading-skeleton";
-import { Briefcase, MapPin, Calendar, Users } from "lucide-react";
+import { Briefcase, MapPin, Calendar, Users, ExternalLink } from "lucide-react";
 import { Link } from "wouter";
 import type { Job } from "@shared/schema";
 
@@ -60,6 +60,17 @@ export default function JobsPage() {
                           <span className="flex items-center gap-1">
                             <MapPin className="h-3.5 w-3.5" />
                             {job.location}
+                            {(job as any).latitude && (job as any).longitude && (
+                              <a
+                                href={`https://www.google.com/maps?q=${(job as any).latitude},${(job as any).longitude}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline ml-1"
+                                title="Open in Google Maps"
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                              </a>
+                            )}
                           </span>
                           <span>{job.requiredSkill}</span>
                         </div>

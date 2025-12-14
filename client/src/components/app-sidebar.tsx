@@ -26,6 +26,11 @@ import {
   FileText,
   UserCheck,
   ClipboardList,
+  Shield,
+  AlertTriangle,
+  Activity,
+  DollarSign,
+  UserPlus,
 } from "lucide-react";
 
 export function AppSidebar() {
@@ -45,6 +50,8 @@ export function AppSidebar() {
     { title: "Dashboard", url: "/", icon: LayoutDashboard },
     { title: "Donate Items", url: "/donate", icon: Heart },
     { title: "My Donations", url: "/my-donations", icon: FileText },
+    { title: "Propose Workshop", url: "/propose-workshop", icon: GraduationCap },
+    { title: "My Workshops", url: "/my-workshops", icon: ClipboardList },
   ];
 
   const businessMenuItems = [
@@ -57,14 +64,23 @@ export function AppSidebar() {
   const communityHeadMenuItems = [
     { title: "Dashboard", url: "/", icon: LayoutDashboard },
     { title: "Donations", url: "/donations", icon: Heart },
-    { title: "Donation Requests", url: "/donation-requests", icon: FileText },
-    { title: "Jobs", url: "/jobs", icon: Briefcase },
+    { title: "Job Allocation", url: "/job-allocation", icon: UserPlus },
     { title: "Workers", url: "/workers", icon: Users },
-    { title: "Workshops", url: "/workshops", icon: GraduationCap },
+    { title: "Workshop Proposals", url: "/workshop-proposals", icon: GraduationCap },
+  ];
+
+  const superAdminMenuItems = [
+    { title: "Dashboard", url: "/", icon: LayoutDashboard },
+    { title: "Master Admins", url: "/admin/master-admins", icon: Shield },
+    { title: "User Management", url: "/admin/users", icon: Users },
+    { title: "Community Heads", url: "/admin/community-heads", icon: UserCheck },
+    { title: "System Logs", url: "/admin/system-logs", icon: Activity },
+    { title: "Settings", url: "/settings", icon: Settings },
   ];
 
   const adminMenuItems = [
     { title: "Dashboard", url: "/", icon: LayoutDashboard },
+    { title: "User Management", url: "/admin/users", icon: Users },
     { title: "Community Heads", url: "/community-heads", icon: UserCheck },
     { title: "Donations", url: "/donations", icon: Heart },
     { title: "Jobs", url: "/jobs", icon: Briefcase },
@@ -72,16 +88,28 @@ export function AppSidebar() {
     { title: "Settings", url: "/settings", icon: Settings },
   ];
 
+  const masterAdminMenuItems = [
+    { title: "Dashboard", url: "/", icon: LayoutDashboard },
+    { title: "Community Heads", url: "/master-admin/community-heads", icon: Users },
+    { title: "Activity Logs", url: "/master-admin/logs", icon: Activity },
+    { title: "Flagged Reports", url: "/master-admin/flags", icon: AlertTriangle },
+    { title: "CSR Funds", url: "/master-admin/csr", icon: DollarSign },
+  ];
+
   const getMenuItems = () => {
     switch (user?.role) {
-      case "DONOR":
-        return donorMenuItems;
-      case "BUSINESS":
-        return businessMenuItems;
-      case "COMMUNITY_HEAD":
-        return communityHeadMenuItems;
+      case "SUPER_ADMIN":
+        return superAdminMenuItems;
+      case "MASTER_ADMIN":
+        return masterAdminMenuItems;
       case "MAIN_ADMIN":
         return adminMenuItems;
+      case "COMMUNITY_HEAD":
+        return communityHeadMenuItems;
+      case "BUSINESS":
+        return businessMenuItems;
+      case "DONOR":
+        return donorMenuItems;
       default:
         return donorMenuItems;
     }
@@ -97,6 +125,10 @@ export function AppSidebar() {
         return "Community Head";
       case "MAIN_ADMIN":
         return "Administrator";
+      case "MASTER_ADMIN":
+        return "Master Admin";
+      case "SUPER_ADMIN":
+        return "Super Admin";
       default:
         return "User";
     }
@@ -110,6 +142,9 @@ export function AppSidebar() {
         return Users;
       case "MAIN_ADMIN":
         return Settings;
+      case "MASTER_ADMIN":
+      case "SUPER_ADMIN":
+        return Shield;
       default:
         return Heart;
     }

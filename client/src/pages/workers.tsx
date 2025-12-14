@@ -17,6 +17,7 @@ import { EmptyState } from "@/components/empty-state";
 import { CardSkeleton } from "@/components/loading-skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Users, Plus, Upload, X } from "lucide-react";
+import { LocationPicker } from "@/components/location-picker";
 import type { WorkerProfile } from "@shared/schema";
 
 const workerSchema = z.object({
@@ -24,6 +25,9 @@ const workerSchema = z.object({
   age: z.number().min(16, "Minimum age is 16").max(70, "Maximum age is 70"),
   skill: z.string().min(1, "Please select a skill"),
   experience: z.string().optional(),
+  location: z.string().optional(),
+  latitude: z.number().nullable().optional(),
+  longitude: z.number().nullable().optional(),
 });
 
 type WorkerForm = z.infer<typeof workerSchema>;
@@ -53,6 +57,7 @@ export default function WorkersPage() {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [photos, setPhotos] = useState<string[]>([]);
+  const [coordinates, setCoordinates] = useState<{ lat: number | null; lng: number | null }>({ lat: null, lng: null });
 
   const { data: workers, isLoading } = useQuery<WorkerProfile[]>({
     queryKey: ["/api/workers/ch"],
@@ -65,12 +70,20 @@ export default function WorkersPage() {
       age: 25,
       skill: "",
       experience: "",
+      location: "",
+      latitude: null,
+      longitude: null,
     },
   });
 
   const mutation = useMutation({
     mutationFn: async (data: WorkerForm) => {
-      return apiRequest("POST", "/api/workers", { ...data, photos });
+      return apiRequest("POST", "/api/workers", { 
+        ...data, 
+        photos,
+        latitude: coordinates.lat,
+        longitude: coordinates.lng,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/workers/ch"] });
@@ -209,6 +222,25 @@ export default function WorkersPage() {
                           rows={3}
                           data-testid="input-worker-experience"
                           {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Worker Location (Optional)</FormLabel>
+                      <FormControl>
+                        <LocationPicker
+                          value={field.value || ""}
+                          onChange={field.onChange}
+                          onCoordinatesChange={(lat, lng) => setCoordinates({ lat, lng })}
+                          placeholder="Enter location or auto-detect"
                         />
                       </FormControl>
                       <FormMessage />

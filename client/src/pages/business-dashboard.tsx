@@ -3,11 +3,12 @@ import { Link } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { StatCard } from "@/components/stat-card";
 import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
 import { StatCardSkeleton } from "@/components/loading-skeleton";
-import { Briefcase, Users, CheckCircle, Clock, Plus, ArrowRight, MapPin } from "lucide-react";
+import { Briefcase, Users, CheckCircle, Clock, Plus, ArrowRight, MapPin, Building2, Eye } from "lucide-react";
 import type { Job, Application } from "@shared/schema";
 
 export default function BusinessDashboard() {
@@ -33,24 +34,40 @@ export default function BusinessDashboard() {
   const recentJobs = jobs?.slice(0, 4) || [];
 
   return (
-    <div className="space-y-6 pb-20 lg:pb-0">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight lg:text-3xl">
-            Welcome back, {user?.name?.split(" ")[0]}
-          </h1>
-          <p className="text-muted-foreground">
-            Find skilled workers for your business needs
-          </p>
+    <div className="space-y-8 pb-20 lg:pb-0">
+      {/* Hero Section - Clean Green */}
+      <div className="relative overflow-hidden rounded-3xl bg-primary border border-primary p-6 lg:p-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <Building2 className="h-5 w-5 text-white" />
+              <span className="text-sm font-medium text-white/90">Business Portal</span>
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">
+              Welcome back, {user?.name?.split(" ")[0]}
+            </h1>
+            <p className="text-white/90 max-w-md">
+              Find skilled workers from local communities for your business needs
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="outline" className="rounded-xl border-2 border-white/60 text-white bg-white/10 hover:bg-white/20" asChild>
+              <Link href="/worker-matches">
+                <Eye className="h-4 w-4 mr-2" />
+                View Matches
+              </Link>
+            </Button>
+            <Button size="lg" variant="secondary" className="rounded-xl bg-white text-primary border-2 border-white/60 hover:bg-white/90" asChild data-testid="button-post-job">
+              <Link href="/post-job">
+                <Plus className="h-4 w-4 mr-2" />
+                Post a Job
+              </Link>
+            </Button>
+          </div>
         </div>
-        <Button asChild data-testid="button-post-job">
-          <Link href="/post-job">
-            <Plus className="h-4 w-4 mr-2" />
-            Post a Job
-          </Link>
-        </Button>
       </div>
 
+      {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {isLoading ? (
           <>

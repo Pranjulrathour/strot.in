@@ -3,6 +3,7 @@ import { Link } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { StatCard } from "@/components/stat-card";
 import { StatusBadge } from "@/components/status-badge";
@@ -17,6 +18,8 @@ import {
   ArrowRight,
   Package,
   Clock,
+  TrendingUp,
+  UserPlus,
 } from "lucide-react";
 import type { Donation, Job, WorkerProfile, Workshop, CommunityHead } from "@shared/schema";
 
@@ -52,21 +55,44 @@ export default function CHDashboard() {
   const upcomingWorkshops = workshops?.filter((w) => w.status === "approved") || [];
 
   return (
-    <div className="space-y-6 pb-20 lg:pb-0">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold tracking-tight lg:text-3xl">
-            Community Head Dashboard
-          </h1>
-          <p className="text-muted-foreground">
-            {chProfile?.locality || "Manage your locality"} · Performance Score: {chProfile?.performanceScore || 0}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <StatusBadge status={chProfile?.status || "pending"} />
+    <div className="space-y-8 pb-20 lg:pb-0">
+      {/* Hero Section - Clean Blue */}
+      <div className="relative overflow-hidden rounded-3xl bg-primary border border-primary p-6 lg:p-8">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <Badge variant="secondary" className="bg-white text-primary">
+                <TrendingUp className="h-3 w-3 mr-1" />
+                Score: {chProfile?.performanceScore || 0}
+              </Badge>
+              <StatusBadge status={chProfile?.status || "pending"} />
+            </div>
+            <h1 className="text-2xl font-bold tracking-tight lg:text-3xl">
+              Community Head Dashboard
+            </h1>
+            <p className="text-white/90 max-w-md">
+              Managing <span className="font-medium text-white">{chProfile?.locality || "your locality"}</span> · 
+              Empowering your community through donations, jobs, and skill development
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <Button variant="outline" className="rounded-xl border-2 border-white/60 text-white bg-white/10 hover:bg-white/20" asChild>
+              <Link href="/workers">
+                <Users className="h-4 w-4 mr-2" />
+                Add Worker
+              </Link>
+            </Button>
+            <Button variant="secondary" className="rounded-xl bg-white text-primary border-2 border-white/60 hover:bg-white/90" asChild>
+              <Link href="/job-allocation">
+                <UserPlus className="h-4 w-4 mr-2" />
+                Allocate Jobs
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
 
+      {/* Stats Grid */}
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {isLoading ? (
           <>
@@ -283,7 +309,7 @@ export default function CHDashboard() {
                       data-testid={`worker-${worker.id}`}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary font-medium">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-ch-100 text-ch-700 font-medium">
                           {worker.name.charAt(0)}
                         </div>
                         <div className="flex-1 min-w-0">

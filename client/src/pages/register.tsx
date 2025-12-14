@@ -10,15 +10,18 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { LocationPicker } from "@/components/location-picker";
 import { Heart, Briefcase, GraduationCap, Eye, EyeOff } from "lucide-react";
 
 const registerSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
-  phone: z.string().min(10, "Phone number must be at least 10 digits"),
-  email: z.string().email("Invalid email").optional().or(z.literal("")),
+  email: z.string().email("Invalid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
   confirmPassword: z.string(),
   role: z.enum(["DONOR", "BUSINESS", "COMMUNITY_HEAD"]),
+  location: z.string().optional(),
+  latitude: z.number().nullable().optional(),
+  longitude: z.number().nullable().optional(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -37,11 +40,13 @@ export default function RegisterPage() {
     resolver: zodResolver(registerSchema),
     defaultValues: {
       name: "",
-      phone: "",
       email: "",
       password: "",
       confirmPassword: "",
       role: "DONOR",
+      location: "",
+      latitude: null,
+      longitude: null,
     },
   });
 
@@ -50,13 +55,15 @@ export default function RegisterPage() {
     try {
       await register({
         name: data.name,
-        phone: data.phone,
-        email: data.email || undefined,
+        email: data.email,
         password: data.password,
         role: data.role,
+        location: data.location,
+        latitude: data.latitude,
+        longitude: data.longitude,
       });
       toast({ title: "Welcome to STROT!", description: "Your account has been created successfully." });
-      setLocation("/");
+      setLocation("/", { replace: true });
     } catch (error) {
       toast({
         title: "Registration failed",
@@ -146,29 +153,10 @@ export default function RegisterPage() {
 
                   <FormField
                     control={form.control}
-                    name="phone"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Phone Number</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="tel"
-                            placeholder="Enter your phone number"
-                            data-testid="input-phone"
-                            {...field}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email (Optional)</FormLabel>
+                        <FormLabel>Email</FormLabel>
                         <FormControl>
                           <Input
                             type="email"
@@ -248,6 +236,28 @@ export default function RegisterPage() {
                             placeholder="Confirm your password"
                             data-testid="input-confirm-password"
                             {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="location"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Location (Optional)</FormLabel>
+                        <FormControl>
+                          <LocationPicker
+                            value={field.value || ""}
+                            onChange={field.onChange}
+                            onCoordinatesChange={(lat, lng) => {
+                              form.setValue("latitude", lat);
+                              form.setValue("longitude", lng);
+                            }}
+                            placeholder="Auto-detect or enter your location"
                           />
                         </FormControl>
                         <FormMessage />

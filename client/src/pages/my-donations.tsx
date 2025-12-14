@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
 import { CardSkeleton } from "@/components/loading-skeleton";
-import { ArrowLeft, Heart, Plus, Calendar, Package } from "lucide-react";
+import { ArrowLeft, Heart, Plus, Calendar, Package, MapPin, ExternalLink } from "lucide-react";
 import type { Donation } from "@shared/schema";
 
 export default function MyDonationsPage() {
@@ -96,6 +96,24 @@ export default function MyDonationsPage() {
                       <p className="text-sm text-muted-foreground line-clamp-2">
                         {donation.description}
                       </p>
+                    )}
+
+                    {(donation as any).location && (
+                      <div className="flex items-center gap-2 text-sm">
+                        <MapPin className="h-4 w-4 text-muted-foreground shrink-0" />
+                        <span className="text-muted-foreground truncate">{(donation as any).location}</span>
+                        {(donation as any).latitude && (donation as any).longitude && (
+                          <a
+                            href={`https://www.google.com/maps?q=${(donation as any).latitude},${(donation as any).longitude}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1 text-primary hover:underline shrink-0"
+                            title="Open in Google Maps"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5" />
+                          </a>
+                        )}
+                      </div>
                     )}
                     
                     <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground pt-2">

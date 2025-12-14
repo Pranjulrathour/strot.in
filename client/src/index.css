@@ -2,6 +2,89 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Persona Color Palettes */
+:root {
+  /* Saffron (Donor) - Clean, solid saffron */
+  --saffron-50: 33 100% 96%;
+  --saffron-100: 33 100% 90%;
+  --saffron-200: 33 100% 80%;
+  --saffron-300: 33 100% 70%;
+  --saffron-400: 33 100% 60%;
+  --saffron-500: 33 100% 50%;
+  --saffron-600: 33 100% 42%;
+  --saffron-700: 33 100% 35%;
+  --saffron-800: 33 100% 28%;
+  --saffron-900: 33 100% 20%;
+  --saffron-950: 33 100% 12%;
+
+  /* Green (Business) */
+  --business-50: 142 76% 96%;
+  --business-100: 142 76% 90%;
+  --business-200: 142 69% 78%;
+  --business-300: 142 69% 65%;
+  --business-400: 142 69% 52%;
+  --business-500: 142 76% 36%;
+  --business-600: 142 76% 30%;
+  --business-700: 142 76% 24%;
+  --business-800: 142 76% 18%;
+  --business-900: 142 76% 12%;
+  --business-950: 142 76% 8%;
+
+  /* Blue (Community Head) */
+  --ch-50: 217 91% 96%;
+  --ch-100: 217 91% 90%;
+  --ch-200: 217 91% 80%;
+  --ch-300: 217 91% 70%;
+  --ch-400: 217 91% 60%;
+  --ch-500: 217 91% 50%;
+  --ch-600: 217 91% 42%;
+  --ch-700: 217 91% 35%;
+  --ch-800: 217 91% 28%;
+  --ch-900: 217 91% 20%;
+  --ch-950: 217 91% 12%;
+}
+
+/* Role-based brand theming
+   We set data-role-theme on the <html> element (document.documentElement).
+   This overrides shadcn/tailwind CSS variables so buttons, icons, rings, and sidebar
+   all inherit the role brand color automatically.
+*/
+:root[data-role-theme="donor"] {
+  --primary: var(--saffron-500);
+  --primary-foreground: 0 0% 100%;
+  --ring: var(--saffron-500);
+
+  --sidebar-primary: var(--saffron-500);
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-ring: var(--saffron-500);
+
+  --chart-1: var(--saffron-500);
+}
+
+:root[data-role-theme="business"] {
+  --primary: var(--business-500);
+  --primary-foreground: 0 0% 100%;
+  --ring: var(--business-500);
+
+  --sidebar-primary: var(--business-500);
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-ring: var(--business-500);
+
+  --chart-1: var(--business-500);
+}
+
+:root[data-role-theme="community_head"] {
+  --primary: var(--ch-500);
+  --primary-foreground: 0 0% 100%;
+  --ring: var(--ch-500);
+
+  --sidebar-primary: var(--ch-500);
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-ring: var(--ch-500);
+
+  --chart-1: var(--ch-500);
+}
+
 /* LIGHT MODE */
 :root {
   --button-outline: rgba(0,0,0, .10);

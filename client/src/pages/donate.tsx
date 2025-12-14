@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Upload, X, Heart } from "lucide-react";
+import { LocationPicker } from "@/components/location-picker";
 import { Link } from "wouter";
 
 const donationSchema = z.object({
@@ -20,7 +21,9 @@ const donationSchema = z.object({
   category: z.string().min(1, "Please select a category"),
   quantity: z.number().min(1, "Quantity must be at least 1"),
   description: z.string().optional(),
-  locality: z.string().optional(),
+  location: z.string().min(1, "Location is required"),
+  latitude: z.number().nullable().optional(),
+  longitude: z.number().nullable().optional(),
 });
 
 type DonationForm = z.infer<typeof donationSchema>;
@@ -41,6 +44,7 @@ export default function DonatePage() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [images, setImages] = useState<string[]>([]);
+  const [coordinates, setCoordinates] = useState<{ lat: number | null; lng: number | null }>({ lat: null, lng: null });
 
   const form = useForm<DonationForm>({
     resolver: zodResolver(donationSchema),
@@ -49,13 +53,20 @@ export default function DonatePage() {
       category: "",
       quantity: 1,
       description: "",
-      locality: "",
+      location: "",
+      latitude: null,
+      longitude: null,
     },
   });
 
   const mutation = useMutation({
     mutationFn: async (data: DonationForm) => {
-      return apiRequest("POST", "/api/donations", { ...data, images });
+      return apiRequest("POST", "/api/donations", { 
+        ...data, 
+        images,
+        latitude: coordinates.lat,
+        longitude: coordinates.lng,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/donations/my"] });
@@ -202,15 +213,16 @@ export default function DonatePage() {
 
               <FormField
                 control={form.control}
-                name="locality"
+                name="location"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Preferred Locality (Optional)</FormLabel>
+                    <FormLabel>Pickup Location</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Leave empty to let any Community Head claim"
-                        data-testid="input-locality"
-                        {...field}
+                      <LocationPicker
+                        value={field.value}
+                        onChange={field.onChange}
+                        onCoordinatesChange={(lat, lng) => setCoordinates({ lat, lng })}
+                        placeholder="Enter address or click to auto-detect"
                       />
                     </FormControl>
                     <FormMessage />

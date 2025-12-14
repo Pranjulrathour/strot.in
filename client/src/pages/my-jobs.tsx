@@ -1,16 +1,46 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { Link } from "wouter";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
 import { CardSkeleton } from "@/components/loading-skeleton";
-import { ArrowLeft, Briefcase, Plus, MapPin, Calendar, Users } from "lucide-react";
+import { ArrowLeft, Briefcase, Plus, MapPin, Calendar, Users, ExternalLink } from "lucide-react";
+import { apiRequest, queryClient } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { Job } from "@shared/schema";
 
 export default function MyJobsPage() {
+  const { toast } = useToast();
+
   const { data: jobs, isLoading } = useQuery<Job[]>({
     queryKey: ["/api/jobs/my"],
+  });
+
+  const closeJobMutation = useMutation({
+    mutationFn: async (jobId: string) => {
+      const res = await apiRequest("PATCH", `/api/jobs/${jobId}`, { status: "closed" });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error((body as any)?.message || "Failed to close job");
+      }
+      return true;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/jobs/my"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/jobs"] });
+      toast({
+        title: "Job closed",
+        description: "This job is no longer visible under open jobs.",
+      });
+    },
+    onError: (err) => {
+      toast({
+        title: "Could not close job",
+        description: err instanceof Error ? err.message : "Unknown error",
+        variant: "destructive",
+      });
+    },
   });
 
   const formatDate = (date: string | Date | null) => {
@@ -79,6 +109,17 @@ export default function MyJobsPage() {
                           <span className="flex items-center gap-1">
                             <MapPin className="h-3.5 w-3.5" />
                             {job.location}
+                            {(job as any).latitude && (job as any).longitude && (
+                              <a
+                                href={`https://www.google.com/maps?q=${(job as any).latitude},${(job as any).longitude}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline ml-1"
+                                title="Open in Google Maps"
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                              </a>
+                            )}
                           </span>
                           <span>{job.requiredSkill}</span>
                         </div>
@@ -113,7 +154,12 @@ export default function MyJobsPage() {
                             View Matches
                           </Link>
                         </Button>
-                        <Button variant="outline" size="sm">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => closeJobMutation.mutate(job.id)}
+                          disabled={closeJobMutation.isPending}
+                        >
                           Close Job
                         </Button>
                       </div>

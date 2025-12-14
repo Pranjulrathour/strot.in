@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 
@@ -12,35 +11,47 @@ interface StatCardProps {
     isPositive: boolean;
   };
   className?: string;
+  variant?: "default" | "gradient";
 }
 
-export function StatCard({ title, value, subtitle, icon: Icon, trend, className }: StatCardProps) {
+export function StatCard({ title, value, subtitle, icon: Icon, trend, className, variant = "default" }: StatCardProps) {
   return (
-    <Card className={cn("overflow-visible", className)}>
-      <CardContent className="p-6">
-        <div className="flex items-start justify-between gap-4">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-muted-foreground">{title}</p>
-            <p className="text-3xl font-bold tracking-tight" data-testid={`stat-value-${title.toLowerCase().replace(/\s+/g, '-')}`}>
-              {value}
-            </p>
-            {subtitle && (
-              <p className="text-sm text-muted-foreground">{subtitle}</p>
-            )}
-            {trend && (
-              <p className={cn(
-                "text-sm font-medium",
-                trend.isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"
-              )}>
-                {trend.isPositive ? "+" : "-"}{Math.abs(trend.value)}% from last month
-              </p>
-            )}
-          </div>
-          <div className="rounded-lg bg-primary/10 p-3">
-            <Icon className="h-6 w-6 text-primary" />
-          </div>
+    <div
+      className={cn(
+        "relative overflow-hidden rounded-2xl border border-border p-5 transition-all duration-300 bg-card",
+        variant === "gradient" ? "" : "",
+        "hover:shadow-lg hover:-translate-y-0.5",
+        className
+      )}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div className="space-y-1.5">
+          <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{title}</p>
+          <p 
+            className="text-3xl font-semibold tracking-tight" 
+            data-testid={`stat-value-${title.toLowerCase().replace(/\s+/g, '-')}`}
+          >
+            {value}
+          </p>
+          {subtitle && (
+            <p className="text-xs text-muted-foreground">{subtitle}</p>
+          )}
+          {trend && (
+            <div className={cn(
+              "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
+              trend.isPositive 
+                ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-900 dark:text-emerald-200" 
+                : "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-200"
+            )}>
+              <span>{trend.isPositive ? "↑" : "↓"}</span>
+              <span>{Math.abs(trend.value)}%</span>
+            </div>
+          )}
         </div>
-      </CardContent>
-    </Card>
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-muted">
+          <Icon className="h-5 w-5 text-primary" />
+        </div>
+      </div>
+    </div>
   );
 }
