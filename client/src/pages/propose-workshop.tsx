@@ -42,6 +42,7 @@ const WORKSHOP_SKILLS = [
 const proposalSchema = z.object({
   topic: z.string().min(1, "Please select a skill to teach"),
   description: z.string().min(20, "Please provide at least 20 characters about what you'll teach"),
+  phone: z.string().min(10, "Phone number is required").max(15, "Invalid phone number"),
   location: z.string().min(3, "Please enter the location where you can conduct the workshop"),
   maxAttendees: z.coerce.number().min(5, "Minimum 5 attendees").max(50, "Maximum 50 attendees"),
   latitude: z.number().nullable().optional(),
@@ -60,6 +61,7 @@ export default function ProposeWorkshopPage() {
     defaultValues: {
       topic: "",
       description: "",
+      phone: "",
       location: "",
       maxAttendees: 15,
       latitude: null,
@@ -156,6 +158,19 @@ export default function ProposeWorkshopPage() {
               />
               {form.formState.errors.description && (
                 <p className="text-sm text-destructive">{form.formState.errors.description.message}</p>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phone">Your Contact Number *</Label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="e.g., 9876543210"
+                {...form.register("phone")}
+              />
+              {form.formState.errors.phone && (
+                <p className="text-sm text-destructive">{form.formState.errors.phone.message}</p>
               )}
             </div>
 

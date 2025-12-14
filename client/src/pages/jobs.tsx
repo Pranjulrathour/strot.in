@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
 import { CardSkeleton } from "@/components/loading-skeleton";
-import { Briefcase, MapPin, Calendar, Users, ExternalLink } from "lucide-react";
+import { Briefcase, MapPin, Calendar, Users, ExternalLink, Phone } from "lucide-react";
 import { Link } from "wouter";
 import type { Job } from "@shared/schema";
 
@@ -88,6 +88,16 @@ export default function JobsPage() {
                       <p className="text-sm font-medium text-primary">
                         {job.salaryRange}
                       </p>
+                    )}
+
+                    {(job as any).phone && (
+                      <a
+                        href={`tel:${(job as any).phone}`}
+                        className="flex items-center gap-1.5 text-sm text-primary hover:underline"
+                      >
+                        <Phone className="h-3.5 w-3.5" />
+                        Contact: {(job as any).phone}
+                      </a>
                     )}
                     
                     <div className="flex flex-wrap items-center justify-between gap-4 pt-2">

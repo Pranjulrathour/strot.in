@@ -21,6 +21,7 @@ const jobSchema = z.object({
   description: z.string().optional(),
   requiredSkill: z.string().min(1, "Please select a required skill"),
   salaryRange: z.string().optional(),
+  phone: z.string().min(10, "Contact phone is required").max(15, "Invalid phone number"),
   location: z.string().min(2, "Location is required"),
   latitude: z.number().nullable().optional(),
   longitude: z.number().nullable().optional(),
@@ -61,6 +62,7 @@ export default function PostJobPage() {
       description: "",
       requiredSkill: "",
       salaryRange: "",
+      phone: "",
       location: "",
       latitude: null,
       longitude: null,
@@ -176,6 +178,25 @@ export default function PostJobPage() {
                   )}
                 />
               </div>
+
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contact Phone *</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g., 9876543210"
+                        type="tel"
+                        data-testid="input-phone"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               <FormField
                 control={form.control}

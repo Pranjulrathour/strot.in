@@ -16,12 +16,13 @@ import { StatusBadge } from "@/components/status-badge";
 import { EmptyState } from "@/components/empty-state";
 import { CardSkeleton } from "@/components/loading-skeleton";
 import { useToast } from "@/hooks/use-toast";
-import { Users, Plus, Upload, X } from "lucide-react";
+import { Users, Plus, Upload, X, Phone } from "lucide-react";
 import { LocationPicker } from "@/components/location-picker";
 import type { WorkerProfile } from "@shared/schema";
 
 const workerSchema = z.object({
   name: z.string().min(2, "Name is required"),
+  phone: z.string().min(10, "Phone number is required").max(15, "Invalid phone number"),
   age: z.number().min(16, "Minimum age is 16").max(70, "Maximum age is 70"),
   skill: z.string().min(1, "Please select a skill"),
   experience: z.string().optional(),
@@ -67,6 +68,7 @@ export default function WorkersPage() {
     resolver: zodResolver(workerSchema),
     defaultValues: {
       name: "",
+      phone: "",
       age: 25,
       skill: "",
       experience: "",
@@ -153,6 +155,25 @@ export default function WorkersPage() {
                         <Input
                           placeholder="Enter worker's name"
                           data-testid="input-worker-name"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="phone"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Phone Number *</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="e.g., 9876543210"
+                          type="tel"
+                          data-testid="input-worker-phone"
                           {...field}
                         />
                       </FormControl>
@@ -348,6 +369,15 @@ export default function WorkersPage() {
                       </div>
                       <StatusBadge status={worker.status} />
                     </div>
+                    {(worker as any).phone && (
+                      <a
+                        href={`tel:${(worker as any).phone}`}
+                        className="flex items-center gap-1.5 text-sm text-primary hover:underline mt-2"
+                      >
+                        <Phone className="h-3.5 w-3.5" />
+                        {(worker as any).phone}
+                      </a>
+                    )}
                     {worker.experience && (
                       <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
                         {worker.experience}

@@ -21,6 +21,7 @@ const donationSchema = z.object({
   category: z.string().min(1, "Please select a category"),
   quantity: z.number().min(1, "Quantity must be at least 1"),
   description: z.string().optional(),
+  phone: z.string().min(10, "Phone number is required").max(15, "Invalid phone number"),
   location: z.string().min(1, "Location is required"),
   latitude: z.number().nullable().optional(),
   longitude: z.number().nullable().optional(),
@@ -53,6 +54,7 @@ export default function DonatePage() {
       category: "",
       quantity: 1,
       description: "",
+      phone: "",
       location: "",
       latitude: null,
       longitude: null,
@@ -203,6 +205,25 @@ export default function DonatePage() {
                         className="resize-none"
                         rows={3}
                         data-testid="input-description"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Contact Phone *</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="e.g., 9876543210"
+                        type="tel"
+                        data-testid="input-phone"
                         {...field}
                       />
                     </FormControl>
