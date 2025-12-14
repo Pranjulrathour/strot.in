@@ -23,11 +23,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const res = await fetch("/api/auth/me");
       if (res.ok) {
-        const data = await res.json();
-        setUser(data.user);
+        const userData = await res.json();
+        setUser(userData);
+      } else {
+        setUser(null);
       }
     } catch (error) {
       console.error("Auth check failed:", error);
+      setUser(null);
     } finally {
       setIsLoading(false);
     }
@@ -43,8 +46,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const error = await res.json();
       throw new Error(error.message || "Login failed");
     }
-    const data = await res.json();
-    setUser(data.user);
+    const userData = await res.json();
+    setUser(userData);
   }
 
   async function register(data: { name: string; phone: string; email?: string; password: string; role: string }) {
@@ -57,8 +60,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const error = await res.json();
       throw new Error(error.message || "Registration failed");
     }
-    const result = await res.json();
-    setUser(result.user);
+    const userData = await res.json();
+    setUser(userData);
   }
 
   async function logout() {

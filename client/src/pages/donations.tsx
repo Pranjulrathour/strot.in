@@ -13,7 +13,11 @@ import type { Donation } from "@shared/schema";
 export default function DonationsPage() {
   const { toast } = useToast();
 
-  const { data: donations, isLoading } = useQuery<Donation[]>({
+  const { data: pendingDonations, isLoading: loadingPending } = useQuery<Donation[]>({
+    queryKey: ["/api/donations/pending"],
+  });
+
+  const { data: myClaimedDonations, isLoading: loadingClaimed } = useQuery<Donation[]>({
     queryKey: ["/api/donations/ch"],
   });
 
@@ -22,6 +26,7 @@ export default function DonationsPage() {
       return apiRequest("PATCH", `/api/donations/${id}/claim`, {});
     },
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/donations/pending"] });
       queryClient.invalidateQueries({ queryKey: ["/api/donations/ch"] });
       toast({ title: "Donation claimed!", description: "Pick up and deliver to those in need." });
     },
@@ -72,9 +77,10 @@ export default function DonationsPage() {
     });
   };
 
-  const pendingDonations = donations?.filter((d) => d.status === "pending") || [];
-  const claimedDonations = donations?.filter((d) => d.status === "claimed") || [];
-  const deliveredDonations = donations?.filter((d) => d.status === "delivered") || [];
+  const availablePending = pendingDonations || [];
+  const claimedDonations = myClaimedDonations?.filter((d) => d.status === "claimed") || [];
+  const deliveredDonations = myClaimedDonations?.filter((d) => d.status === "delivered") || [];
+  const isLoading = loadingPending || loadingClaimed;
 
   return (
     <div className="space-y-6 pb-20 lg:pb-0">
@@ -87,7 +93,7 @@ export default function DonationsPage() {
         <TabsList>
           <TabsTrigger value="pending" data-testid="tab-pending">
             <Clock className="h-4 w-4 mr-2" />
-            Pending ({pendingDonations.length})
+            Available ({availablePending.length})
           </TabsTrigger>
           <TabsTrigger value="claimed" data-testid="tab-claimed">
             <Package className="h-4 w-4 mr-2" />
@@ -105,7 +111,7 @@ export default function DonationsPage() {
               <CardSkeleton />
               <CardSkeleton />
             </div>
-          ) : pendingDonations.length === 0 ? (
+          ) : availablePending.length === 0 ? (
             <EmptyState
               icon={Heart}
               title="No pending donations"
@@ -113,7 +119,7 @@ export default function DonationsPage() {
             />
           ) : (
             <div className="space-y-4">
-              {pendingDonations.map((donation) => (
+              {availablePending.map((donation) => (
                 <Card key={donation.id} data-testid={`pending-donation-${donation.id}`}>
                   <CardContent className="p-6">
                     <div className="flex flex-col sm:flex-row gap-4">

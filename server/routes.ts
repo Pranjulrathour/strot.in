@@ -202,9 +202,18 @@ export async function registerRoutes(
 
   app.patch("/api/donations/:id/deliver", requireAuth, async (req, res) => {
     try {
+      const ch = await storage.getCommunityHeadByUserId(req.session.userId!);
+      if (!ch) {
+        return res.status(403).json({ message: "Only community heads can deliver donations" });
+      }
+      const donations = await storage.getDonationsByCommunityHead(ch.id);
+      const donation = donations.find(d => d.id === req.params.id && d.status === "claimed");
+      if (!donation) {
+        return res.status(403).json({ message: "You can only deliver donations you have claimed" });
+      }
       const { proofImage } = req.body;
-      const donation = await storage.deliverDonation(req.params.id, proofImage);
-      res.json(donation);
+      const updated = await storage.deliverDonation(req.params.id, proofImage);
+      res.json(updated);
     } catch (error) {
       res.status(500).json({ message: "Failed to mark donation as delivered" });
     }
