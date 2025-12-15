@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Link } from "wouter";
 import {
   ArrowRight,
-  Heart,
   Briefcase,
   GraduationCap,
   Users,
@@ -16,6 +15,14 @@ import {
   Menu,
   X,
 } from "lucide-react";
+
+const heroImage = "/hero.png";
+const balImage = "/bal.png";
+const buddhiImage = "/buddhi.png";
+const vidyaImage = "/vidya.png";
+const communityHeadDashboardImage = "/dashboard-community-head.png";
+const businessDashboardImage = "/dashboard-business.png";
+const userDashboardImage = "/dashboard-user.png";
 
 // STROT Logo SVG Component
 const StrotLogo = ({ className = "w-8 h-8" }: { className?: string }) => (
@@ -130,10 +137,14 @@ export default function LandingPage() {
         {/* Hero Image */}
         <div className="w-full mt-10 md:mt-14 relative z-10">
           <div className="relative w-full h-[50vh] md:h-[65vh] max-h-[700px] min-h-[400px] bg-strot-black rounded-3xl overflow-hidden mx-auto max-w-7xl">
-            <div className="absolute inset-0 flex items-center justify-center">
-              <StrotLogo className="w-40 h-40 md:w-56 md:h-56 text-white/10" />
-            </div>
-            <div className="absolute bottom-8 left-8 right-8 text-white/80">
+            <img
+              src={heroImage}
+              alt="STROT community"
+              className="absolute inset-0 w-full h-full object-cover"
+              loading="eager"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-black/0" />
+            <div className="absolute bottom-8 left-8 right-8 text-white/90">
               <p className="text-sm md:text-base font-medium">Connecting communities through verified impact</p>
             </div>
           </div>
@@ -156,9 +167,15 @@ export default function LandingPage() {
             {/* BAL Card */}
             <div className="group cursor-pointer">
               <div className="relative rounded-[44px] overflow-hidden h-[400px] md:h-[520px] bg-bal-orange">
-                <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                  <StrotLogo className="w-48 h-48 text-white" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <img
+                    src={balImage}
+                    alt="BAL"
+                    className="w-full h-full object-cover opacity-95"
+                    loading="lazy"
+                  />
                 </div>
+                <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/0 to-black/20" />
                 <div className="absolute top-6 right-4 transform rotate-90 origin-top-right font-extrabold text-6xl md:text-7xl text-white/15 tracking-wider">
                   BAL
                 </div>
@@ -169,7 +186,7 @@ export default function LandingPage() {
                   <div className="text-base text-strot-black/60">Basic Necessities</div>
                 </div>
                 <span className="w-14 h-14 rounded-full bg-strot-black text-white shadow-sm group-hover:bg-strot-black/90 transition-colors flex items-center justify-center">
-                  <Heart className="w-5 h-5" />
+                  BAL
                 </span>
               </div>
             </div>
@@ -177,9 +194,15 @@ export default function LandingPage() {
             {/* BUDDHI Card */}
             <div className="group cursor-pointer">
               <div className="relative rounded-[44px] overflow-hidden h-[400px] md:h-[520px] bg-buddhi-green">
-                <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                  <StrotLogo className="w-48 h-48 text-white" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <img
+                    src={buddhiImage}
+                    alt="BUDDHI"
+                    className="w-full h-full object-cover opacity-95"
+                    loading="lazy"
+                  />
                 </div>
+                <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/0 to-black/20" />
                 <div className="absolute top-6 right-4 transform rotate-90 origin-top-right font-extrabold text-6xl md:text-7xl text-white/15 tracking-wider">
                   BUDDHI
                 </div>
@@ -198,9 +221,15 @@ export default function LandingPage() {
             {/* VIDYA Card */}
             <div className="group cursor-pointer">
               <div className="relative rounded-[44px] overflow-hidden h-[400px] md:h-[520px] bg-vidya-blue">
-                <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                  <StrotLogo className="w-48 h-48 text-white" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <img
+                    src={vidyaImage}
+                    alt="VIDYA"
+                    className="w-full h-full object-cover opacity-95"
+                    loading="lazy"
+                  />
                 </div>
+                <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/0 to-black/20" />
                 <div className="absolute top-6 right-4 transform rotate-90 origin-top-right font-extrabold text-6xl md:text-7xl text-white/15 tracking-wider">
                   VIDYA
                 </div>
@@ -268,8 +297,13 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="bg-strot-offwhite rounded-3xl border border-slate-200/60 shadow-sm overflow-hidden">
-                <div className="aspect-[4/3] bg-gradient-to-br from-bal-orange/20 to-bal-orange/5 flex items-center justify-center">
-                  <Heart className="w-20 h-20 text-bal-orange/40" />
+                <div className="p-4">
+                  <img
+                    src={userDashboardImage}
+                    alt="User dashboard"
+                    className="w-full h-auto rounded-2xl border border-strot-black/10 shadow-sm"
+                    loading="lazy"
+                  />
                 </div>
               </div>
             </div>
@@ -284,8 +318,13 @@ export default function LandingPage() {
             <GeoCorner />
             <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
               <div className="bg-strot-offwhite rounded-3xl border border-slate-200/60 shadow-sm overflow-hidden lg:order-1">
-                <div className="aspect-[4/3] bg-gradient-to-br from-buddhi-green/20 to-buddhi-green/5 flex items-center justify-center">
-                  <Briefcase className="w-20 h-20 text-buddhi-green/40" />
+                <div className="p-4">
+                  <img
+                    src={businessDashboardImage}
+                    alt="Business dashboard"
+                    className="w-full h-auto rounded-2xl border border-strot-black/10 shadow-sm"
+                    loading="lazy"
+                  />
                 </div>
               </div>
               <div className="lg:order-2">
@@ -348,8 +387,13 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="bg-strot-offwhite rounded-3xl border border-slate-200/60 shadow-sm overflow-hidden">
-                <div className="aspect-[4/3] bg-gradient-to-br from-vidya-blue/20 to-vidya-blue/5 flex items-center justify-center">
-                  <Users className="w-20 h-20 text-vidya-blue/40" />
+                <div className="p-4">
+                  <img
+                    src={communityHeadDashboardImage}
+                    alt="Community Head dashboard"
+                    className="w-full h-auto rounded-2xl border border-strot-black/10 shadow-sm"
+                    loading="lazy"
+                  />
                 </div>
               </div>
             </div>
