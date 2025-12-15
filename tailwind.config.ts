@@ -121,6 +121,12 @@ export default {
           900: "hsl(var(--ch-900) / <alpha-value>)",
           950: "hsl(var(--ch-950) / <alpha-value>)",
         },
+        // STROT Landing Page Colors
+        "strot-black": "#2B2F2F",
+        "strot-offwhite": "#F5F6F7",
+        "bal-orange": "#F7931E",
+        "buddhi-green": "#2E7D32",
+        "vidya-blue": "#1E3A8A",
       },
       fontFamily: {
         sans: ["Inter", "var(--font-sans)", "system-ui", "sans-serif"],
