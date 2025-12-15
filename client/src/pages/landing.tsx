@@ -158,86 +158,38 @@ export default function LandingPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
             {/* BAL Card */}
-            <div className="group cursor-pointer">
-              <div className="relative rounded-3xl overflow-hidden h-[400px] md:h-[480px] bg-black border border-bal-orange/20 hover:border-bal-orange/40 transition-all duration-300">
-                <div className="absolute inset-0 flex items-center justify-center bg-bal-orange/5">
-                  <img
-                    src={balImage}
-                    alt="BAL"
-                    className="w-full h-full object-contain p-8"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent">
-                  <div className="text-bal-orange text-xs font-bold uppercase tracking-widest mb-2">Basic Necessities</div>
-                  <div className="text-2xl font-bold text-white">BAL</div>
-                  <p className="text-white/60 text-sm mt-2">Food, essentials & emergency support for immediate survival needs.</p>
-                </div>
-              </div>
-              <div className="mt-5 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-full bg-bal-orange/20 text-bal-orange flex items-center justify-center">
-                    <Heart className="w-5 h-5" />
-                  </span>
-                  <span className="text-white/70 text-sm font-medium">Donations</span>
-                </div>
-                <ArrowRight className="w-5 h-5 text-white/30 group-hover:text-bal-orange group-hover:translate-x-1 transition-all" />
+            <div className="group">
+              <div className="relative rounded-[44px] overflow-hidden h-[420px] md:h-[520px] bg-bal-orange/15 border border-bal-orange/25 hover:border-bal-orange/45 transition-colors">
+                <img
+                  src={balImage}
+                  alt="BAL"
+                  className="w-full h-full object-contain p-10 md:p-12"
+                  loading="lazy"
+                />
               </div>
             </div>
 
             {/* BUDDHI Card */}
-            <div className="group cursor-pointer">
-              <div className="relative rounded-3xl overflow-hidden h-[400px] md:h-[480px] bg-black border border-buddhi-green/20 hover:border-buddhi-green/40 transition-all duration-300">
-                <div className="absolute inset-0 flex items-center justify-center bg-buddhi-green/5">
-                  <img
-                    src={buddhiImage}
-                    alt="BUDDHI"
-                    className="w-full h-full object-contain p-8"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent">
-                  <div className="text-buddhi-green text-xs font-bold uppercase tracking-widest mb-2">Employment Engine</div>
-                  <div className="text-2xl font-bold text-white">BUDDHI</div>
-                  <p className="text-white/60 text-sm mt-2">Job matching & placement connecting workers with local businesses.</p>
-                </div>
-              </div>
-              <div className="mt-5 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-full bg-buddhi-green/20 text-buddhi-green flex items-center justify-center">
-                    <Briefcase className="w-5 h-5" />
-                  </span>
-                  <span className="text-white/70 text-sm font-medium">Employment</span>
-                </div>
-                <ArrowRight className="w-5 h-5 text-white/30 group-hover:text-buddhi-green group-hover:translate-x-1 transition-all" />
+            <div className="group">
+              <div className="relative rounded-[44px] overflow-hidden h-[420px] md:h-[520px] bg-buddhi-green/15 border border-buddhi-green/25 hover:border-buddhi-green/45 transition-colors">
+                <img
+                  src={buddhiImage}
+                  alt="BUDDHI"
+                  className="w-full h-full object-contain p-10 md:p-12"
+                  loading="lazy"
+                />
               </div>
             </div>
 
             {/* VIDYA Card */}
-            <div className="group cursor-pointer">
-              <div className="relative rounded-3xl overflow-hidden h-[400px] md:h-[480px] bg-black border border-vidya-blue/20 hover:border-vidya-blue/40 transition-all duration-300">
-                <div className="absolute inset-0 flex items-center justify-center bg-vidya-blue/5">
-                  <img
-                    src={vidyaImage}
-                    alt="VIDYA"
-                    className="w-full h-full object-contain p-8"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black via-black/80 to-transparent">
-                  <div className="text-vidya-blue text-xs font-bold uppercase tracking-widest mb-2">Education & Upskilling</div>
-                  <div className="text-2xl font-bold text-white">VIDYA</div>
-                  <p className="text-white/60 text-sm mt-2">Skill workshops & training for sustainable long-term growth.</p>
-                </div>
-              </div>
-              <div className="mt-5 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <span className="w-10 h-10 rounded-full bg-vidya-blue/20 text-vidya-blue flex items-center justify-center">
-                    <GraduationCap className="w-5 h-5" />
-                  </span>
-                  <span className="text-white/70 text-sm font-medium">Workshops</span>
-                </div>
-                <ArrowRight className="w-5 h-5 text-white/30 group-hover:text-vidya-blue group-hover:translate-x-1 transition-all" />
+            <div className="group">
+              <div className="relative rounded-[44px] overflow-hidden h-[420px] md:h-[520px] bg-vidya-blue/15 border border-vidya-blue/25 hover:border-vidya-blue/45 transition-colors">
+                <img
+                  src={vidyaImage}
+                  alt="VIDYA"
+                  className="w-full h-full object-contain p-10 md:p-12"
+                  loading="lazy"
+                />
               </div>
             </div>
           </div>
