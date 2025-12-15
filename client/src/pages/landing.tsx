@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { Link } from "wouter";
 import {
   ArrowRight,
@@ -30,25 +31,26 @@ export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white antialiased font-sans">
+    <div className="min-h-screen bg-white text-strot-black antialiased font-sans dark:bg-[#0a0a0a] dark:text-white">
       {/* Navigation */}
       <nav className="fixed top-0 left-0 w-full z-50 px-4 md:px-6 py-4">
-        <div className="max-w-7xl mx-auto bg-black/80 backdrop-blur-xl border border-white/10 rounded-full px-6 py-3 flex justify-between items-center shadow-2xl shadow-black/50">
+        <div className="max-w-7xl mx-auto bg-white/80 backdrop-blur-xl border border-strot-black/10 rounded-full px-6 py-3 flex justify-between items-center shadow-2xl shadow-black/10 dark:bg-black/80 dark:border-white/10 dark:shadow-black/50">
           <Link href="/" className="text-xl font-bold tracking-tight flex items-center gap-3">
             <img src={logoImage} alt="STROT" className="w-8 h-8" />
-            <span className="tracking-wider bg-gradient-to-r from-white to-white/80 bg-clip-text">STROT</span>
+            <span className="tracking-wider">STROT</span>
           </Link>
           
           <div className="hidden lg:flex gap-8 items-center">
-            <a href="#modules" className="text-sm font-medium text-white/60 hover:text-bal-orange transition-colors">Modules</a>
-            <a href="#donor" className="text-sm font-medium text-white/60 hover:text-bal-orange transition-colors">Donor</a>
-            <a href="#business" className="text-sm font-medium text-white/60 hover:text-buddhi-green transition-colors">Business</a>
-            <a href="#community-head" className="text-sm font-medium text-white/60 hover:text-vidya-blue transition-colors">Community Head</a>
+            <a href="#modules" className="text-sm font-medium text-strot-black/60 hover:text-bal-orange transition-colors dark:text-white/60 dark:hover:text-bal-orange">Modules</a>
+            <a href="#donor" className="text-sm font-medium text-strot-black/60 hover:text-bal-orange transition-colors dark:text-white/60 dark:hover:text-bal-orange">Donor</a>
+            <a href="#business" className="text-sm font-medium text-strot-black/60 hover:text-buddhi-green transition-colors dark:text-white/60 dark:hover:text-buddhi-green">Business</a>
+            <a href="#community-head" className="text-sm font-medium text-strot-black/60 hover:text-vidya-blue transition-colors dark:text-white/60 dark:hover:text-vidya-blue">Community Head</a>
           </div>
 
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-2">
+            <ThemeToggle />
             <Link href="/login">
-              <Button variant="ghost" className="text-sm font-medium text-white/70 hover:text-white hover:bg-white/5">
+              <Button variant="ghost" className="text-sm font-medium text-strot-black/70 hover:text-strot-black hover:bg-strot-black/5 dark:text-white/70 dark:hover:text-white dark:hover:bg-white/5">
                 Log in
               </Button>
             </Link>
@@ -70,13 +72,13 @@ export default function LandingPage() {
         
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="lg:hidden mt-2 bg-black/95 backdrop-blur-xl border border-white/10 rounded-2xl p-4 shadow-2xl">
+          <div className="lg:hidden mt-2 bg-white/95 backdrop-blur-xl border border-strot-black/10 rounded-2xl p-4 shadow-2xl dark:bg-black/95 dark:border-white/10">
             <div className="flex flex-col gap-3">
-              <a href="#modules" className="text-sm font-medium p-3 hover:bg-white/5 rounded-xl transition-colors" onClick={() => setMobileMenuOpen(false)}>Modules</a>
+              <a href="#modules" className="text-sm font-medium p-3 hover:bg-strot-black/5 rounded-xl transition-colors dark:hover:bg-white/5" onClick={() => setMobileMenuOpen(false)}>Modules</a>
               <a href="#donor" className="text-sm font-medium p-3 hover:bg-bal-orange/10 hover:text-bal-orange rounded-xl transition-colors" onClick={() => setMobileMenuOpen(false)}>Donor</a>
               <a href="#business" className="text-sm font-medium p-3 hover:bg-buddhi-green/10 hover:text-buddhi-green rounded-xl transition-colors" onClick={() => setMobileMenuOpen(false)}>Business</a>
               <a href="#community-head" className="text-sm font-medium p-3 hover:bg-vidya-blue/10 hover:text-vidya-blue rounded-xl transition-colors" onClick={() => setMobileMenuOpen(false)}>Community Head</a>
-              <Link href="/login" className="text-sm font-medium p-3 hover:bg-white/5 rounded-xl transition-colors">Login</Link>
+              <Link href="/login" className="text-sm font-medium p-3 hover:bg-strot-black/5 rounded-xl transition-colors dark:hover:bg-white/5">Login</Link>
               <Link href="/register" className="text-sm font-medium p-3 bg-bal-orange text-white rounded-xl text-center mt-2 shadow-lg shadow-bal-orange/25">Get Started</Link>
             </div>
           </div>
@@ -84,34 +86,34 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero Section */}
-      <header className="relative pt-32 md:pt-40 pb-12 md:pb-16 px-6 overflow-hidden bg-[#0a0a0a]">
+      <header className="relative pt-32 md:pt-40 pb-12 md:pb-16 px-6 overflow-hidden bg-white dark:bg-[#0a0a0a]">
         {/* Subtle background glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-bal-orange/5 blur-[120px] rounded-full pointer-events-none" />
         
         <div className="max-w-7xl mx-auto relative z-10 text-center">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 text-white/80 text-xs font-semibold uppercase tracking-wider mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-strot-black/5 border border-strot-black/10 text-strot-black/70 text-xs font-semibold uppercase tracking-wider mb-8 dark:bg-white/5 dark:border-white/10 dark:text-white/80">
             <Sparkles className="w-3.5 h-3.5 text-bal-orange" />
             System-Driven Transformation
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-white">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-strot-black dark:text-white">
             Breaking the Cycle of
             <br />
             Generational Poverty
           </h1>
 
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-white/70 text-base md:text-lg font-medium">
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-strot-black/70 text-base md:text-lg font-medium dark:text-white/70">
             <span>Survive</span>
-            <span className="text-white/30">→</span>
+            <span className="text-strot-black/30 dark:text-white/30">→</span>
             <span className="px-4 py-1.5 rounded-full bg-bal-orange/10 border border-bal-orange/30 text-bal-orange text-sm font-bold">BAL</span>
             <span className="px-4 py-1.5 rounded-full bg-buddhi-green/10 border border-buddhi-green/30 text-buddhi-green text-sm font-bold">BUDDHI</span>
             <span className="px-4 py-1.5 rounded-full bg-vidya-blue/10 border border-vidya-blue/30 text-vidya-blue text-sm font-bold">VIDYA</span>
-            <span className="text-white/30">→</span>
+            <span className="text-strot-black/30 dark:text-white/30">→</span>
             <span>Evolve</span>
           </div>
 
-          <p className="mt-6 text-base md:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-6 text-base md:text-lg text-strot-black/60 max-w-2xl mx-auto leading-relaxed dark:text-white/60">
             Not just food. Not just jobs.
             <br className="hidden sm:block" />
             A system for long-term transformation.
@@ -144,14 +146,14 @@ export default function LandingPage() {
       </header>
 
       {/* Modules Section */}
-      <section id="modules" className="py-20 md:py-28 px-6 bg-[#0a0a0a] relative overflow-hidden">
+      <section id="modules" className="py-20 md:py-28 px-6 bg-white relative overflow-hidden dark:bg-[#0a0a0a]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <p className="text-sm font-semibold text-white/40 uppercase tracking-widest mb-4">The Three Modules</p>
+            <p className="text-sm font-semibold text-strot-black/50 uppercase tracking-widest mb-4 dark:text-white/40">The Three Modules</p>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6 text-white">
               <span className="text-bal-orange">BAL</span>. <span className="text-buddhi-green">BUDDHI</span>. <span className="text-vidya-blue">VIDYA</span>.
             </h2>
-            <p className="text-lg text-white/60 leading-relaxed">
+            <p className="text-lg text-strot-black/60 leading-relaxed dark:text-white/60">
               A simple structure: support survival, enable earnings, and build long-term growth.
             </p>
           </div>
@@ -159,7 +161,7 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
             {/* BAL Card */}
             <div className="group">
-              <div className="relative rounded-[44px] overflow-hidden h-[420px] md:h-[520px] bg-bal-orange/15 border border-bal-orange/25 hover:border-bal-orange/45 transition-colors">
+              <div className="relative rounded-[44px] overflow-hidden h-[420px] md:h-[520px] bg-bal-orange/15 border border-bal-orange/25 hover:border-bal-orange/45 transition-colors shadow-sm shadow-bal-orange/10">
                 <img
                   src={balImage}
                   alt="BAL"
@@ -171,7 +173,7 @@ export default function LandingPage() {
 
             {/* BUDDHI Card */}
             <div className="group">
-              <div className="relative rounded-[44px] overflow-hidden h-[420px] md:h-[520px] bg-buddhi-green/15 border border-buddhi-green/25 hover:border-buddhi-green/45 transition-colors">
+              <div className="relative rounded-[44px] overflow-hidden h-[420px] md:h-[520px] bg-buddhi-green/15 border border-buddhi-green/25 hover:border-buddhi-green/45 transition-colors shadow-sm shadow-buddhi-green/10">
                 <img
                   src={buddhiImage}
                   alt="BUDDHI"
@@ -183,7 +185,7 @@ export default function LandingPage() {
 
             {/* VIDYA Card */}
             <div className="group">
-              <div className="relative rounded-[44px] overflow-hidden h-[420px] md:h-[520px] bg-vidya-blue/15 border border-vidya-blue/25 hover:border-vidya-blue/45 transition-colors">
+              <div className="relative rounded-[44px] overflow-hidden h-[420px] md:h-[520px] bg-vidya-blue/15 border border-vidya-blue/25 hover:border-vidya-blue/45 transition-colors shadow-sm shadow-vidya-blue/10">
                 <img
                   src={vidyaImage}
                   alt="VIDYA"
@@ -195,19 +197,19 @@ export default function LandingPage() {
           </div>
 
           {/* Stats Bar */}
-          <div className="mt-16 bg-white/[0.02] rounded-2xl border border-white/10 px-6 py-10 md:px-12">
+          <div className="mt-16 bg-strot-black/[0.02] rounded-2xl border border-strot-black/10 px-6 py-10 md:px-12 dark:bg-white/[0.02] dark:border-white/10">
             <div className="grid grid-cols-3 gap-6 text-center">
               <div>
                 <div className="text-4xl md:text-5xl font-bold tracking-tight text-bal-orange">500+</div>
-                <div className="mt-2 text-sm md:text-base text-white/50 font-medium">Donations</div>
+                <div className="mt-2 text-sm md:text-base text-strot-black/50 font-medium dark:text-white/50">Donations</div>
               </div>
               <div>
                 <div className="text-4xl md:text-5xl font-bold tracking-tight text-buddhi-green">120+</div>
-                <div className="mt-2 text-sm md:text-base text-white/50 font-medium">Jobs Matched</div>
+                <div className="mt-2 text-sm md:text-base text-strot-black/50 font-medium dark:text-white/50">Jobs Matched</div>
               </div>
               <div>
                 <div className="text-4xl md:text-5xl font-bold tracking-tight text-vidya-blue">45</div>
-                <div className="mt-2 text-sm md:text-base text-white/50 font-medium">Workshops</div>
+                <div className="mt-2 text-sm md:text-base text-strot-black/50 font-medium dark:text-white/50">Workshops</div>
               </div>
             </div>
           </div>
