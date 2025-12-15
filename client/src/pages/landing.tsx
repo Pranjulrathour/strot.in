@@ -95,11 +95,10 @@ export default function LandingPage() {
             System-Driven Transformation
           </div>
 
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.02] text-white">
-            Breaking the Cycle of{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-bal-orange via-buddhi-green to-vidya-blue">
-              Generational Poverty
-            </span>
+          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-[1.1] text-white">
+            Breaking the Cycle of
+            <br />
+            Generational Poverty
           </h1>
 
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3 text-white/70 text-base md:text-lg font-medium">
@@ -113,7 +112,9 @@ export default function LandingPage() {
           </div>
 
           <p className="mt-6 text-base md:text-lg text-white/60 max-w-2xl mx-auto leading-relaxed">
-            Not just food. Not just jobs. A system for long-term transformation.
+            Not just food. Not just jobs.
+            <br className="hidden sm:block" />
+            A system for long-term transformation.
           </p>
 
           <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
@@ -128,13 +129,13 @@ export default function LandingPage() {
             </a>
           </div>
 
-          <div className="mt-12 w-full flex justify-center">
+          <div className="mt-6 md:mt-8 w-full flex justify-center">
             <div className="relative">
               <div className="absolute -inset-4 bg-gradient-to-t from-bal-orange/20 via-transparent to-transparent blur-2xl opacity-50 pointer-events-none" />
               <img
                 src={heroImage}
                 alt="STROT community"
-                className="relative block w-full max-w-5xl h-auto drop-shadow-2xl"
+                className="relative block w-full max-w-5xl h-auto drop-shadow-2xl -translate-y-6 md:-translate-y-8"
                 loading="eager"
               />
             </div>
