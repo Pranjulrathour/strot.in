@@ -163,7 +163,7 @@ export default function LandingPage() {
                 <img
                   src={balImage}
                   alt="BAL"
-                  className="w-full h-full object-contain p-10 md:p-12"
+                  className="w-full h-full object-cover"
                   loading="lazy"
                 />
               </div>
@@ -175,7 +175,7 @@ export default function LandingPage() {
                 <img
                   src={buddhiImage}
                   alt="BUDDHI"
-                  className="w-full h-full object-contain p-10 md:p-12"
+                  className="w-full h-full object-cover"
                   loading="lazy"
                 />
               </div>
@@ -187,7 +187,7 @@ export default function LandingPage() {
                 <img
                   src={vidyaImage}
                   alt="VIDYA"
-                  className="w-full h-full object-contain p-10 md:p-12"
+                  className="w-full h-full object-cover"
                   loading="lazy"
                 />
               </div>
