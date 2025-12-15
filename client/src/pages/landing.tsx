@@ -117,7 +117,19 @@ export default function LandingPage() {
             A system for long-term transformation.
           </p>
 
-          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="mt-6 md:mt-8 w-full flex justify-center">
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-t from-bal-orange/20 via-transparent to-transparent blur-2xl opacity-50 pointer-events-none" />
+              <img
+                src={heroImage}
+                alt="STROT community"
+                className="relative z-10 block w-full max-w-5xl h-auto drop-shadow-2xl -translate-y-6 md:-translate-y-40"
+                loading="eager"
+              />
+            </div>
+          </div>
+
+          <div className="mt-2 md:mt-0 flex flex-col sm:flex-row gap-4 justify-center">
             <Link href="/register">
               <Button className="px-8 py-4 h-auto bg-bal-orange text-white rounded-full text-base font-semibold hover:bg-bal-orange/90 transition-all shadow-xl shadow-bal-orange/30">
                 Join the Step Forward
@@ -127,18 +139,6 @@ export default function LandingPage() {
             <a href="#modules" className="px-8 py-4 bg-white/5 border border-white/15 text-white rounded-full text-base font-medium hover:bg-white/10 hover:border-white/25 transition-all text-center backdrop-blur-sm">
               Partner With STROT
             </a>
-          </div>
-
-          <div className="mt-6 md:mt-8 w-full flex justify-center">
-            <div className="relative">
-              <div className="absolute -inset-4 bg-gradient-to-t from-bal-orange/20 via-transparent to-transparent blur-2xl opacity-50 pointer-events-none" />
-              <img
-                src={heroImage}
-                alt="STROT community"
-                className="relative block w-full max-w-5xl h-auto drop-shadow-2xl -translate-y-6 md:-translate-y-8"
-                loading="eager"
-              />
-            </div>
           </div>
         </div>
       </header>
