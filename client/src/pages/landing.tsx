@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 const heroImage = "/hero.png";
+const logoImage = "/logo.png";
 const balImage = "/bal.png";
 const buddhiImage = "/buddhi.png";
 const vidyaImage = "/vidya.png";
@@ -53,7 +54,7 @@ export default function LandingPage() {
       <nav className="fixed top-0 left-0 w-full z-50 px-4 md:px-6 py-4">
         <div className="max-w-7xl mx-auto bg-white/90 backdrop-blur-md border border-slate-200/60 rounded-full px-6 py-3 flex justify-between items-center shadow-sm">
           <Link href="/" className="text-xl font-bold tracking-tight flex items-center gap-3">
-            <StrotLogo className="w-8 h-8 text-strot-black" />
+            <img src={logoImage} alt="STROT" className="w-8 h-8" />
             <span className="tracking-wider">STROT</span>
           </Link>
           
@@ -136,17 +137,13 @@ export default function LandingPage() {
 
         {/* Hero Image */}
         <div className="w-full mt-10 md:mt-14 relative z-10">
-          <div className="relative w-full h-[50vh] md:h-[65vh] max-h-[700px] min-h-[400px] bg-strot-black rounded-3xl overflow-hidden mx-auto max-w-7xl">
+          <div className="relative w-full overflow-hidden">
             <img
               src={heroImage}
               alt="STROT community"
-              className="absolute inset-0 w-full h-full object-cover"
+              className="block w-full h-auto"
               loading="eager"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/10 to-black/0" />
-            <div className="absolute bottom-8 left-8 right-8 text-white/90">
-              <p className="text-sm md:text-base font-medium">Connecting communities through verified impact</p>
-            </div>
           </div>
         </div>
       </header>
@@ -517,7 +514,7 @@ export default function LandingPage() {
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex items-center gap-3">
-              <StrotLogo className="w-7 h-7 text-white" />
+              <img src={logoImage} alt="STROT" className="w-7 h-7" />
               <span className="text-white font-bold tracking-wider">STROT</span>
               <span className="text-white/30 text-sm ml-2">© 2025</span>
             </div>
